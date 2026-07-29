@@ -1,0 +1,43 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build & reload on server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          envs: GH_TOKEN
+          command_timeout: 15m
+          script: |
+            set -euo pipefail
+            cd /var/www/koenflow
+            echo "==> Fetch latest main (ephemeral Actions token over HTTPS)"
+            git fetch "https://x-access-token:${GH_TOKEN}@github.com/XivionOy/koenflow-site.git" +refs/heads/main:refs/remotes/origin/main
+            git reset --hard origin/main
+            echo "==> Install deps"
+            npm ci
+            echo "==> Build"
+            npm run build
+            echo "==> Reload app (zero-downtime)"
+            pm2 reload koenflow --update-env || pm2 restart koenflow
+            pm2 save
+            echo "==> Deployed commit $(git rev-parse --short HEAD)"
