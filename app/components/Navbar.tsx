@@ -1,19 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowUpRight, Globe, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowUpRight, ChevronDown, Globe, X } from "lucide-react";
 
 import { NAV, LANG_COOKIE, type Lang } from "../lib/i18n";
-
-const NAV_LINKS = [
-  { key: "instructions", href: "/instructions" },
-  { key: "partners", href: "/partners" },
-] as const;
+import { PRODUCTS, PRODUCT_ORDER } from "../instructions/products";
 
 const DISCORD_URL = "https://discord.gg/FwyZdVS5Vq";
 
 export default function Navbar({ lang }: { lang: Lang }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [instrOpen, setInstrOpen] = useState(false);
+  const instrRef = useRef<HTMLDivElement>(null);
   const t = NAV[lang];
 
   const switchLang = () => {
@@ -21,6 +19,23 @@ export default function Navbar({ lang }: { lang: Lang }) {
     document.cookie = `${LANG_COOKIE}=${next};path=/;max-age=31536000`;
     window.location.reload();
   };
+
+  // Клик вне и Esc закрывают дропдаун инструкций.
+  useEffect(() => {
+    if (!instrOpen) return;
+    const onDown = (e: MouseEvent) => {
+      if (instrRef.current && !instrRef.current.contains(e.target as Node)) setInstrOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setInstrOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [instrOpen]);
 
   return (
     <>
@@ -31,15 +46,47 @@ export default function Navbar({ lang }: { lang: Lang }) {
           </a>
 
           <div className="hidden items-center gap-xl md:flex">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.key}
-                href={link.href}
-                className="font-inter text-nav uppercase text-white/80 transition-colors hover:text-white"
+            {/* Инструкции — дропдаун выбора продукта */}
+            <div ref={instrRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setInstrOpen((v) => !v)}
+                aria-haspopup="menu"
+                aria-expanded={instrOpen}
+                className="flex items-center gap-2xs font-inter text-nav uppercase text-white/80 transition-colors hover:text-white"
               >
-                {t[link.key]}
-              </a>
-            ))}
+                {t.instructions}
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${instrOpen ? "rotate-180" : ""}`}
+                />
+              </button>
+
+              {instrOpen && (
+                <div
+                  role="menu"
+                  className="absolute left-0 top-[calc(100%+14px)] z-50 w-max overflow-hidden rounded-xl border border-white/10 bg-[#0c0912] p-3xs shadow-[0_18px_44px_rgba(0,0,0,0.5)]"
+                >
+                  {PRODUCT_ORDER.map((id) => (
+                    <a
+                      key={id}
+                      href={`/instructions?p=${id}`}
+                      role="menuitem"
+                      onClick={() => setInstrOpen(false)}
+                      className="block whitespace-nowrap rounded-lg px-sm py-xs font-inter text-body-sm text-muted transition-colors hover:bg-white/5 hover:text-white"
+                    >
+                      {PRODUCTS[id].label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <a
+              href="/partners"
+              className="font-inter text-nav uppercase text-white/80 transition-colors hover:text-white"
+            >
+              {t.partners}
+            </a>
           </div>
 
           <div className="hidden items-center gap-xs md:flex">
@@ -100,25 +147,46 @@ export default function Navbar({ lang }: { lang: Lang }) {
         </div>
 
         <div className="container-page flex flex-1 flex-col items-start justify-center gap-sm px-sm">
-          {NAV_LINKS.map((link, i) => (
-            <a
-              key={link.key}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
-              style={{
-                transitionDelay: `${i * 80 + 100}ms`,
-                opacity: menuOpen ? 1 : 0,
-                transform: menuOpen ? "translateY(0)" : "translateY(20px)",
-              }}
-              className="font-podium text-menu uppercase text-white transition-all duration-500"
-            >
-              {t[link.key]}
-            </a>
-          ))}
+          {/* Инструкции с подпунктами продуктов */}
+          <div
+            style={{
+              transitionDelay: "100ms",
+              opacity: menuOpen ? 1 : 0,
+              transform: menuOpen ? "translateY(0)" : "translateY(20px)",
+            }}
+            className="flex flex-col gap-xs transition-all duration-500"
+          >
+            <span className="font-podium text-menu uppercase text-white">{t.instructions}</span>
+            <div className="flex flex-col gap-2xs pl-sm">
+              {PRODUCT_ORDER.map((id) => (
+                <a
+                  key={id}
+                  href={`/instructions?p=${id}`}
+                  onClick={() => setMenuOpen(false)}
+                  className="font-inter text-body uppercase text-white/70 transition-colors hover:text-white"
+                >
+                  {PRODUCTS[id].short}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <a
+            href="/partners"
+            onClick={() => setMenuOpen(false)}
+            style={{
+              transitionDelay: "180ms",
+              opacity: menuOpen ? 1 : 0,
+              transform: menuOpen ? "translateY(0)" : "translateY(20px)",
+            }}
+            className="font-podium text-menu uppercase text-white transition-all duration-500"
+          >
+            {t.partners}
+          </a>
 
           <div
             style={{
-              transitionDelay: `${NAV_LINKS.length * 80 + 100}ms`,
+              transitionDelay: "260ms",
               opacity: menuOpen ? 1 : 0,
               transform: menuOpen ? "translateY(0)" : "translateY(20px)",
             }}

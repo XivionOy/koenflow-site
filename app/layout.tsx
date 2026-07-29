@@ -32,7 +32,9 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: lang === "ru" ? "ru_RU" : "en_US",
     },
     twitter: {
-      card: "summary_large_image",
+      // Компактная карточка без большого баннера: превью ссылки показывает
+      // только иконку сайта, заголовок и описание (без og:image-полотна).
+      card: "summary",
       title: c.title,
       description: c.description,
     },
