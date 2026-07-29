@@ -2,16 +2,26 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SmokyBackground from "../components/SmokyBackground";
 import TocList from "../components/TocList";
+import ProductSwitcher from "../components/ProductSwitcher";
 import { getServerLang } from "../lib/i18n.server";
 import { pageMetadata } from "../lib/seo";
 import { type Lang } from "../lib/i18n";
+import { PRODUCTS, resolveProduct, type Product } from "./products";
 
-const DOWNLOAD_URL = "/downloads/KoenFlowLauncher-latest.exe";
 const DISCORD_URL = "https://discord.gg/FwyZdVS5Vq";
 
-export async function generateMetadata() {
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ p?: string }>;
+}) {
   const lang = await getServerLang();
-  return pageMetadata("instructions", lang, "/instructions");
+  const product = resolveProduct((await searchParams).p);
+  const path = product === "trading" ? "/instructions" : `/instructions?p=${product}`;
+  const base = pageMetadata("instructions", lang, path);
+  // Заголовок вкладки несёт имя продукта, чтобы две инструкции не сливались в
+  // выдаче и в истории браузера.
+  return { ...base, title: `${PRODUCTS[product].short[lang]} · ${base.title}` };
 }
 
 const SECTION_META = [
@@ -27,9 +37,7 @@ const SECTION_META = [
 
 type SettingItem = { name: string; def: string; desc: string };
 
-const CONTENT: Record<
-  Lang,
-  {
+type GuideCopy = {
     breadcrumbHome: string;
     breadcrumbCurrent: string;
     badge: string;
@@ -45,6 +53,10 @@ const CONTENT: Record<
     important: string;
     leadCallout: string;
     defaultLabel: string;
+    // Трейд-специфичные блоки. У ESP свои, поэтому по умолчанию скрыты и
+    // раздел показывает только вводный абзац, пока не придёт текст.
+    showResolutionCards: boolean;
+    showFavoritesImage: boolean;
     toc: Record<string, string>;
     head: Record<string, string>;
     s01p: string;
@@ -81,8 +93,10 @@ const CONTENT: Record<
     s08steps: string[];
     s08button: string;
     s08p2: string;
-  }
-> = {
+};
+
+const GUIDES: Record<Product, Record<Lang, GuideCopy>> = {
+  trading: {
   ru: {
     breadcrumbHome: "Главная",
     breadcrumbCurrent: "Инструкция",
@@ -99,6 +113,8 @@ const CONTENT: Record<
     important: "Важно.",
     leadCallout: "Ознакомьтесь с инструкцией полностью перед выполнением. Большинство проблем возникает из-за пропущенных шагов.",
     defaultLabel: "По умолчанию:",
+    showResolutionCards: true,
+    showFavoritesImage: true,
     toc: {
       defender: "Отключите защиту",
       "after-purchase": "Получение ключа",
@@ -183,6 +199,8 @@ const CONTENT: Record<
     important: "Important.",
     leadCallout: "Read the whole guide before you start. Most issues come from skipped steps.",
     defaultLabel: "Default:",
+    showResolutionCards: true,
+    showFavoritesImage: true,
     toc: {
       defender: "Disable protection",
       "after-purchase": "Getting the key",
@@ -251,7 +269,138 @@ const CONTENT: Record<
     s08button: "Open Discord",
     s08p2: "Our team will try to help as soon as possible.",
   },
+  },
+  // ── ESP guide ────────────────────────────────────────────────────────────
+  // ЧЕРНОВИК. Разделы 01–04 и 08 (защита, ключ, скачивание, активация,
+  // поддержка) одинаковы для обоих продуктов и уже готовы. Разделы 05–07
+  // (настройка ESP, оверлей/радар, хоткеи) — заглушки: заменить, когда придёт
+  // текст. НЕ выкатывать ESP в прод, пока эти три раздела не заполнены.
+  esp: ESP_DRAFT(),
 };
+
+// ЧЕРНОВИК инструкции ESP. Разделы 01–04 и 08 общие с трейдом и готовы;
+// 05–07 (настройка ESP, оверлей/радар, хоткеи) — заглушки: показывают только
+// вводный абзац «текст скоро», трейд-блоки скрыты флагами. Заполнить, когда
+// придёт текст, и только после этого пускать ESP в прод.
+function ESP_DRAFT(): Record<Lang, GuideCopy> {
+  const TODO_RU = "Текст этого раздела для ESP скоро появится.";
+  const TODO_EN = "The ESP copy for this section is coming soon.";
+  const espHead = (base: Record<string, string>, over: Record<string, string>) => ({ ...base, ...over });
+  return {
+    ru: {
+      breadcrumbHome: "Главная",
+      breadcrumbCurrent: "Инструкция",
+      badge: "Инструкция",
+      title: "Подготовка, запуск и настройка",
+      metaUpdated: "Обновлено 24.06.2026",
+      metaRead: "3 мин чтения",
+      sidebarLabel: "Лаунчер",
+      sidebarTitle: "Скачать KoenFlow",
+      sidebarDesc: "Активируйте ключ и запускайте.",
+      sidebarDownload: "Скачать",
+      tocLabel: "Содержание",
+      lead: "Эта инструкция проведёт вас от подготовки системы до первого запуска ESP. Пройдите шаги по порядку, это займёт несколько минут.",
+      important: "Важно.",
+      leadCallout: "Ознакомьтесь с инструкцией полностью перед выполнением. Большинство проблем возникает из-за пропущенных шагов.",
+      defaultLabel: "По умолчанию:",
+      showResolutionCards: false,
+      showFavoritesImage: false,
+      toc: {
+        defender: "Отключите защиту",
+        "after-purchase": "Получение ключа",
+        download: "Скачивание",
+        activate: "Активация ключа",
+        game: "Настройка ESP",
+        settings: "Оверлей и радар",
+        regions: "Хоткеи",
+        support: "Поддержка",
+      },
+      head: espHead(
+        {
+          defender: "Отключите защиту в реальном времени",
+          "after-purchase": "Действия после покупки",
+          download: "Скачивание программы",
+          activate: "Активация ключа",
+          support: "Поддержка",
+        },
+        { game: "Настройка ESP", settings: "Оверлей и радар", regions: "Хоткеи" },
+      ),
+      s01p: "Перед установкой отключите защиту Windows в реальном времени. Делайте это вручную через системные настройки:",
+      s01path: ["Параметры", "Обновление и безопасность", "Безопасность Windows", "Защита от вирусов и угроз", "Управление настройками", "Выключить защиту в реальном времени"],
+      s02p: "После оплаты вы получите ключ активации и эту инструкцию. Ключ выглядит так:",
+      s03p: "Скачайте лаунчер кнопкой «Скачать» в блоке лаунчера и после загрузки установите или запустите приложение.",
+      s04p: "Вернитесь в программу и вставьте полученный ключ активации в соответствующее поле.",
+      s05p: TODO_RU,
+      s05subRes: "", s05card1label: "", s05card1val: "", s05card2label: "", s05card2val: "",
+      s05callout: "", s05subLang: "", s05langPre: "", s05langPost: "",
+      s06p: TODO_RU,
+      s06subSpeed: "", s06subAmmo: "", s06subTrading: "", s06subLang: "",
+      speed: [], ammo: [], trading: [], language: [],
+      s07p: TODO_RU,
+      s07subDo: "", s07p2: "", s07steps: [], s07imgAlt: "", s07callout: "",
+      s08p: "Если возникли проблемы, обращайтесь в поддержку через Discord.",
+      s08steps: ["Перейдите на наш Discord-сервер.", "Найдите раздел поддержки.", "Создайте тикет или напишите сообщение.", "Опишите проблему как можно подробнее."],
+      s08button: "Перейти в Discord",
+      s08p2: "Наша команда постарается помочь в кратчайшие сроки.",
+    },
+    en: {
+      breadcrumbHome: "Home",
+      breadcrumbCurrent: "Guide",
+      badge: "Guide",
+      title: "Setup, launch and configuration",
+      metaUpdated: "Updated 24.06.2026",
+      metaRead: "3 min read",
+      sidebarLabel: "Launcher",
+      sidebarTitle: "Download KoenFlow",
+      sidebarDesc: "Activate the key and launch.",
+      sidebarDownload: "Download",
+      tocLabel: "Contents",
+      lead: "This guide takes you from preparing your system to the ESP’s first launch. Follow the steps in order, it takes a few minutes.",
+      important: "Important.",
+      leadCallout: "Read the whole guide before you start. Most issues come from skipped steps.",
+      defaultLabel: "Default:",
+      showResolutionCards: false,
+      showFavoritesImage: false,
+      toc: {
+        defender: "Disable protection",
+        "after-purchase": "Getting the key",
+        download: "Download",
+        activate: "Key activation",
+        game: "ESP setup",
+        settings: "Overlay & radar",
+        regions: "Hotkeys",
+        support: "Support",
+      },
+      head: espHead(
+        {
+          defender: "Disable real-time protection",
+          "after-purchase": "After purchase",
+          download: "Downloading the program",
+          activate: "Key activation",
+          support: "Support",
+        },
+        { game: "ESP setup", settings: "Overlay & radar", regions: "Hotkeys" },
+      ),
+      s01p: "Before installing, turn off Windows real-time protection. Do it manually through the system settings:",
+      s01path: ["Settings", "Update & Security", "Windows Security", "Virus & threat protection", "Manage settings", "Turn off real-time protection"],
+      s02p: "After payment you’ll receive an activation key and this guide. The key looks like this:",
+      s03p: "Download the launcher with the “Download” button in the launcher block, then install or run the app once it finishes downloading.",
+      s04p: "Go back to the program and paste the activation key you received into the corresponding field.",
+      s05p: TODO_EN,
+      s05subRes: "", s05card1label: "", s05card1val: "", s05card2label: "", s05card2val: "",
+      s05callout: "", s05subLang: "", s05langPre: "", s05langPost: "",
+      s06p: TODO_EN,
+      s06subSpeed: "", s06subAmmo: "", s06subTrading: "", s06subLang: "",
+      speed: [], ammo: [], trading: [], language: [],
+      s07p: TODO_EN,
+      s07subDo: "", s07p2: "", s07steps: [], s07imgAlt: "", s07callout: "",
+      s08p: "If you run into problems, contact support via Discord.",
+      s08steps: ["Go to our Discord server.", "Find the support section.", "Create a ticket or write a message.", "Describe your problem in as much detail as possible."],
+      s08button: "Open Discord",
+      s08p2: "Our team will try to help as soon as possible.",
+    },
+  };
+}
 
 function SectionTitle({ id, n, title }: { id: string; n: string; title: string }) {
   return (
@@ -307,9 +456,15 @@ function Step({ children }: { children: React.ReactNode }) {
   return <li className="font-inter text-body text-muted">{children}</li>;
 }
 
-export default async function InstructionsPage() {
+export default async function InstructionsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ p?: string }>;
+}) {
   const lang = await getServerLang();
-  const c = CONTENT[lang];
+  const product = resolveProduct((await searchParams).p);
+  const meta = PRODUCTS[product];
+  const c = GUIDES[product][lang];
   const sections = SECTION_META.map((m) => ({ ...m, title: c.toc[m.id] }));
 
   return (
@@ -337,7 +492,7 @@ export default async function InstructionsPage() {
 
         {/* Meta */}
         <div className="mt-xs flex flex-wrap items-center gap-2xs font-inter text-label uppercase text-muted">
-          <span>KoenFlow</span>
+          <span>{meta.label[lang]}</span>
           <span className="text-white/25">·</span>
           <span>{c.metaUpdated}</span>
           <span className="text-white/25">·</span>
@@ -353,6 +508,13 @@ export default async function InstructionsPage() {
         <div className="mt-3xl flex flex-col gap-lg lg:flex-row lg:gap-3xl">
           {/* Sidebar */}
           <aside className="flex flex-col gap-md lg:sticky lg:top-[136px] lg:w-72 lg:shrink-0 lg:self-start">
+            {/* Выбор продукта — меняет весь гайд, версию и размер загрузки */}
+            <ProductSwitcher
+              current={product}
+              lang={lang}
+              label={lang === "ru" ? "Продукт" : "Product"}
+            />
+
             <div className="rounded-2xl border border-white/10 bg-white/5 p-sm">
               <span className="font-inter text-label uppercase text-muted">
                 {c.sidebarLabel}
@@ -362,16 +524,16 @@ export default async function InstructionsPage() {
                 {c.sidebarDesc}
               </p>
               <div className="mt-sm flex items-center gap-2xs font-inter text-label uppercase text-muted">
-                <span>V5.1.5</span>
+                <span>{meta.download.version}</span>
                 <span className="text-white/25">·</span>
-                <span>24 MB</span>
+                <span>{meta.download.sizeMb} MB</span>
                 <span className="text-white/25">·</span>
                 <svg viewBox="0 0 448 512" fill="currentColor" className="h-3 w-3" aria-hidden="true">
                   <path d="M0 93.7l183.6-25.3v177.4H0V93.7zm0 324.6l183.6 25.3V268.4H0v149.9zm203.8 28L448 480V268.4H203.8v177.9zm0-380.6v180.1H448V32L203.8 65.7z" />
                 </svg>
               </div>
               <a
-                href={DOWNLOAD_URL}
+                href={meta.download.url}
                 className="mt-sm inline-flex h-lg w-full items-center justify-center rounded-lg bg-white px-sm font-inter text-button uppercase text-black transition-colors hover:bg-white/90"
               >
                 {c.sidebarDownload}
@@ -436,29 +598,33 @@ export default async function InstructionsPage() {
               <SectionTitle id="game" n="05" title={c.head["game"]} />
               <p className="mt-sm font-inter text-body text-muted">{c.s05p}</p>
 
-              <h3 className="mt-md font-inter text-h4 text-ink">{c.s05subRes}</h3>
-              <div className="mt-sm flex flex-col gap-sm sm:flex-row">
-                <div className="flex-1 rounded-lg border border-white/10 bg-white/5 p-sm">
-                  <p className="font-inter text-body-sm text-muted">{c.s05card1label}</p>
-                  <p className="mt-2xs font-inter text-body font-bold text-ink">
-                    {c.s05card1val}
-                  </p>
-                </div>
-                <div className="flex-1 rounded-lg border border-white/10 bg-white/5 p-sm">
-                  <p className="font-inter text-body-sm text-muted">{c.s05card2label}</p>
-                  <p className="mt-2xs font-inter text-body font-bold text-ink">
-                    {c.s05card2val}
-                  </p>
-                </div>
-              </div>
-              <Callout label={c.important}>{c.s05callout}</Callout>
+              {c.showResolutionCards && (
+                <>
+                  <h3 className="mt-md font-inter text-h4 text-ink">{c.s05subRes}</h3>
+                  <div className="mt-sm flex flex-col gap-sm sm:flex-row">
+                    <div className="flex-1 rounded-lg border border-white/10 bg-white/5 p-sm">
+                      <p className="font-inter text-body-sm text-muted">{c.s05card1label}</p>
+                      <p className="mt-2xs font-inter text-body font-bold text-ink">
+                        {c.s05card1val}
+                      </p>
+                    </div>
+                    <div className="flex-1 rounded-lg border border-white/10 bg-white/5 p-sm">
+                      <p className="font-inter text-body-sm text-muted">{c.s05card2label}</p>
+                      <p className="mt-2xs font-inter text-body font-bold text-ink">
+                        {c.s05card2val}
+                      </p>
+                    </div>
+                  </div>
+                  <Callout label={c.important}>{c.s05callout}</Callout>
 
-              <h3 className="mt-md font-inter text-h4 text-ink">{c.s05subLang}</h3>
-              <p className="mt-sm font-inter text-body text-muted">
-                {c.s05langPre}
-                <span className="text-ink">English</span>
-                {c.s05langPost}
-              </p>
+                  <h3 className="mt-md font-inter text-h4 text-ink">{c.s05subLang}</h3>
+                  <p className="mt-sm font-inter text-body text-muted">
+                    {c.s05langPre}
+                    <span className="text-ink">English</span>
+                    {c.s05langPost}
+                  </p>
+                </>
+              )}
             </section>
 
             {/* 06 */}
@@ -467,33 +633,23 @@ export default async function InstructionsPage() {
               <p className="mt-sm font-inter text-body text-muted">{c.s06p}</p>
 
               <div>
-                <h3 className="mt-md font-inter text-h4 text-ink">{c.s06subSpeed}</h3>
-                <div className="mt-sm flex flex-col gap-sm">
-                  {c.speed.map((s) => (
-                    <Setting key={s.name} {...s} defaultLabel={c.defaultLabel} />
+                {[
+                  { h: c.s06subSpeed, items: c.speed, mt: "mt-md" },
+                  { h: c.s06subAmmo, items: c.ammo, mt: "mt-lg" },
+                  { h: c.s06subTrading, items: c.trading, mt: "mt-lg" },
+                  { h: c.s06subLang, items: c.language, mt: "mt-lg" },
+                ]
+                  .filter((g) => g.items.length > 0)
+                  .map((g) => (
+                    <div key={g.h}>
+                      <h3 className={`${g.mt} font-inter text-h4 text-ink`}>{g.h}</h3>
+                      <div className="mt-sm flex flex-col gap-sm">
+                        {g.items.map((s) => (
+                          <Setting key={s.name} {...s} defaultLabel={c.defaultLabel} />
+                        ))}
+                      </div>
+                    </div>
                   ))}
-                </div>
-
-                <h3 className="mt-lg font-inter text-h4 text-ink">{c.s06subAmmo}</h3>
-                <div className="mt-sm flex flex-col gap-sm">
-                  {c.ammo.map((s) => (
-                    <Setting key={s.name} {...s} defaultLabel={c.defaultLabel} />
-                  ))}
-                </div>
-
-                <h3 className="mt-lg font-inter text-h4 text-ink">{c.s06subTrading}</h3>
-                <div className="mt-sm flex flex-col gap-sm">
-                  {c.trading.map((s) => (
-                    <Setting key={s.name} {...s} defaultLabel={c.defaultLabel} />
-                  ))}
-                </div>
-
-                <h3 className="mt-lg font-inter text-h4 text-ink">{c.s06subLang}</h3>
-                <div className="mt-sm flex flex-col gap-sm">
-                  {c.language.map((s) => (
-                    <Setting key={s.name} {...s} defaultLabel={c.defaultLabel} />
-                  ))}
-                </div>
               </div>
             </section>
 
@@ -502,17 +658,21 @@ export default async function InstructionsPage() {
               <SectionTitle id="regions" n="07" title={c.head["regions"]} />
               <p className="mt-sm font-inter text-body text-muted">{c.s07p}</p>
 
-              <h3 className="mt-md font-inter text-h4 text-ink">{c.s07subDo}</h3>
-              <p className="mt-sm font-inter text-body text-muted">{c.s07p2}</p>
-              <ul className="mt-sm flex list-disc flex-col gap-2xs pl-md marker:text-brand">
-                {c.s07steps.map((step, i) => (
-                  <Step key={i}>{step}</Step>
-                ))}
-              </ul>
-              <div className="mt-md overflow-hidden rounded-2xl border border-white/10">
-                <img src="/instructions-favorites.webp" alt={c.s07imgAlt} loading="lazy" decoding="async" className="block w-full" />
-              </div>
-              <Callout label={c.important}>{c.s07callout}</Callout>
+              {c.showFavoritesImage && (
+                <>
+                  <h3 className="mt-md font-inter text-h4 text-ink">{c.s07subDo}</h3>
+                  <p className="mt-sm font-inter text-body text-muted">{c.s07p2}</p>
+                  <ul className="mt-sm flex list-disc flex-col gap-2xs pl-md marker:text-brand">
+                    {c.s07steps.map((step, i) => (
+                      <Step key={i}>{step}</Step>
+                    ))}
+                  </ul>
+                  <div className="mt-md overflow-hidden rounded-2xl border border-white/10">
+                    <img src="/instructions-favorites.webp" alt={c.s07imgAlt} loading="lazy" decoding="async" className="block w-full" />
+                  </div>
+                  <Callout label={c.important}>{c.s07callout}</Callout>
+                </>
+              )}
             </section>
 
             {/* 08 */}
