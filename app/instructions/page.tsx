@@ -2,11 +2,10 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SmokyBackground from "../components/SmokyBackground";
 import TocList from "../components/TocList";
-import ProductSwitcher from "../components/ProductSwitcher";
 import { getServerLang } from "../lib/i18n.server";
 import { pageMetadata } from "../lib/seo";
 import { type Lang } from "../lib/i18n";
-import { PRODUCTS, resolveProduct, type Product } from "./products";
+import { PRODUCTS, resolveProduct } from "./products";
 
 const DISCORD_URL = "https://discord.gg/FwyZdVS5Vq";
 
@@ -95,8 +94,7 @@ type GuideCopy = {
     s08p2: string;
 };
 
-const GUIDES: Record<Product, Record<Lang, GuideCopy>> = {
-  trading: {
+const TRADING_GUIDE: Record<Lang, GuideCopy> = {
   ru: {
     breadcrumbHome: "Главная",
     breadcrumbCurrent: "Инструкция",
@@ -269,138 +267,195 @@ const GUIDES: Record<Product, Record<Lang, GuideCopy>> = {
     s08button: "Open Discord",
     s08p2: "Our team will try to help as soon as possible.",
   },
-  },
-  // ── ESP guide ────────────────────────────────────────────────────────────
-  // ЧЕРНОВИК. Разделы 01–04 и 08 (защита, ключ, скачивание, активация,
-  // поддержка) одинаковы для обоих продуктов и уже готовы. Разделы 05–07
-  // (настройка ESP, оверлей/радар, хоткеи) — заглушки: заменить, когда придёт
-  // текст. НЕ выкатывать ESP в прод, пока эти три раздела не заполнены.
-  esp: ESP_DRAFT(),
 };
 
-// ЧЕРНОВИК инструкции ESP. Разделы 01–04 и 08 общие с трейдом и готовы;
-// 05–07 (настройка ESP, оверлей/радар, хоткеи) — заглушки: показывают только
-// вводный абзац «текст скоро», трейд-блоки скрыты флагами. Заполнить, когда
-// придёт текст, и только после этого пускать ESP в прод.
-function ESP_DRAFT(): Record<Lang, GuideCopy> {
-  const TODO_RU = "Текст этого раздела для ESP скоро появится.";
-  const TODO_EN = "The ESP copy for this section is coming soon.";
-  const espHead = (base: Record<string, string>, over: Record<string, string>) => ({ ...base, ...over });
-  return {
-    ru: {
-      breadcrumbHome: "Главная",
-      breadcrumbCurrent: "Инструкция",
-      badge: "Инструкция",
-      title: "Подготовка, запуск и настройка",
-      metaUpdated: "Обновлено 24.06.2026",
-      metaRead: "3 мин чтения",
-      sidebarLabel: "Лаунчер",
-      sidebarTitle: "Скачать KoenFlow",
-      sidebarDesc: "Активируйте ключ и запускайте.",
-      sidebarDownload: "Скачать",
-      tocLabel: "Содержание",
-      lead: "Эта инструкция проведёт вас от подготовки системы до первого запуска ESP. Пройдите шаги по порядку, это займёт несколько минут.",
-      important: "Важно.",
-      leadCallout: "Ознакомьтесь с инструкцией полностью перед выполнением. Большинство проблем возникает из-за пропущенных шагов.",
-      defaultLabel: "По умолчанию:",
-      showResolutionCards: false,
-      showFavoritesImage: false,
-      toc: {
-        defender: "Отключите защиту",
-        "after-purchase": "Получение ключа",
-        download: "Скачивание",
-        activate: "Активация ключа",
-        game: "Настройка ESP",
-        settings: "Оверлей и радар",
-        regions: "Хоткеи",
-        support: "Поддержка",
+// ── ESP guide ───────────────────────────────────────────────────────────────
+// У ESP свой набор разделов (защита/подделка/изоляция ядра/Hyper-V), поэтому
+// контент блочный, а не по фиксированной трейд-схеме.
+type Block =
+  | { t: "p"; text: string }
+  | { t: "path"; steps: string[] }
+  | { t: "callout"; text: string }
+  | { t: "code"; text: string }
+  | { t: "steps"; items: string[] }
+  | { t: "discord"; button: string; note: string };
+
+type EspSection = { id: string; n: string; toc: string; head: string; blocks: Block[] };
+
+type EspCopy = {
+  breadcrumbHome: string;
+  breadcrumbCurrent: string;
+  badge: string;
+  title: string;
+  metaUpdated: string;
+  metaRead: string;
+  sidebarLabel: string;
+  sidebarTitle: string;
+  sidebarDesc: string;
+  sidebarDownload: string;
+  tocLabel: string;
+  lead: string;
+  important: string;
+  leadCallout: string;
+  sections: EspSection[];
+};
+
+const KEY_SAMPLE = "YC21-EPBM-FOAD-I82D";
+
+const ESP_GUIDE: Record<Lang, EspCopy> = {
+  ru: {
+    breadcrumbHome: "Главная",
+    breadcrumbCurrent: "Инструкция",
+    badge: "Инструкция",
+    title: "Подготовка, запуск и настройка",
+    metaUpdated: "Обновлено 24.06.2026",
+    metaRead: "4 мин чтения",
+    sidebarLabel: "Лаунчер",
+    sidebarTitle: "Скачать KoenFlow",
+    sidebarDesc: "Активируйте ключ и запускайте.",
+    sidebarDownload: "Скачать",
+    tocLabel: "Содержание",
+    lead: "ESP требует подготовки Windows: нужно снять несколько защит, которые иначе блокируют запуск или дают синий экран. Пройдите шаги по порядку.",
+    important: "Важно.",
+    leadCallout: "Ознакомьтесь с инструкцией полностью перед выполнением. Большинство проблем возникает из-за пропущенных шагов.",
+    sections: [
+      {
+        id: "defender", n: "01", toc: "Защита в реальном времени", head: "Отключите защиту в реальном времени",
+        blocks: [
+          { t: "p", text: "Перед установкой отключите защиту Windows в реальном времени. Делайте это вручную через системные настройки:" },
+          { t: "path", steps: ["Параметры", "Обновление и безопасность", "Безопасность Windows", "Защита от вирусов и угроз", "Управление настройками", "Выключить защиту в реальном времени"] },
+        ],
       },
-      head: espHead(
-        {
-          defender: "Отключите защиту в реальном времени",
-          "after-purchase": "Действия после покупки",
-          download: "Скачивание программы",
-          activate: "Активация ключа",
-          support: "Поддержка",
-        },
-        { game: "Настройка ESP", settings: "Оверлей и радар", regions: "Хоткеи" },
-      ),
-      s01p: "Перед установкой отключите защиту Windows в реальном времени. Делайте это вручную через системные настройки:",
-      s01path: ["Параметры", "Обновление и безопасность", "Безопасность Windows", "Защита от вирусов и угроз", "Управление настройками", "Выключить защиту в реальном времени"],
-      s02p: "После оплаты вы получите ключ активации и эту инструкцию. Ключ выглядит так:",
-      s03p: "Скачайте лаунчер кнопкой «Скачать» в блоке лаунчера и после загрузки установите или запустите приложение.",
-      s04p: "Вернитесь в программу и вставьте полученный ключ активации в соответствующее поле.",
-      s05p: TODO_RU,
-      s05subRes: "", s05card1label: "", s05card1val: "", s05card2label: "", s05card2val: "",
-      s05callout: "", s05subLang: "", s05langPre: "", s05langPost: "",
-      s06p: TODO_RU,
-      s06subSpeed: "", s06subAmmo: "", s06subTrading: "", s06subLang: "",
-      speed: [], ammo: [], trading: [], language: [],
-      s07p: TODO_RU,
-      s07subDo: "", s07p2: "", s07steps: [], s07imgAlt: "", s07callout: "",
-      s08p: "Если возникли проблемы, обращайтесь в поддержку через Discord.",
-      s08steps: ["Перейдите на наш Discord-сервер.", "Найдите раздел поддержки.", "Создайте тикет или напишите сообщение.", "Опишите проблему как можно подробнее."],
-      s08button: "Перейти в Discord",
-      s08p2: "Наша команда постарается помочь в кратчайшие сроки.",
-    },
-    en: {
-      breadcrumbHome: "Home",
-      breadcrumbCurrent: "Guide",
-      badge: "Guide",
-      title: "Setup, launch and configuration",
-      metaUpdated: "Updated 24.06.2026",
-      metaRead: "3 min read",
-      sidebarLabel: "Launcher",
-      sidebarTitle: "Download KoenFlow",
-      sidebarDesc: "Activate the key and launch.",
-      sidebarDownload: "Download",
-      tocLabel: "Contents",
-      lead: "This guide takes you from preparing your system to the ESP’s first launch. Follow the steps in order, it takes a few minutes.",
-      important: "Important.",
-      leadCallout: "Read the whole guide before you start. Most issues come from skipped steps.",
-      defaultLabel: "Default:",
-      showResolutionCards: false,
-      showFavoritesImage: false,
-      toc: {
-        defender: "Disable protection",
-        "after-purchase": "Getting the key",
-        download: "Download",
-        activate: "Key activation",
-        game: "ESP setup",
-        settings: "Overlay & radar",
-        regions: "Hotkeys",
-        support: "Support",
+      {
+        id: "tamper", n: "02", toc: "Защита от подделки", head: "Отключите защиту от подделки",
+        blocks: [
+          { t: "p", text: "Там же, в разделе «Защита от вирусов и угроз», отключите «Защиту от подделки» (Tamper Protection). Иначе Windows включит защиту обратно автоматически." },
+          { t: "path", steps: ["Безопасность Windows", "Защита от вирусов и угроз", "Управление настройками", "Защита от подделки — Выкл"] },
+        ],
       },
-      head: espHead(
-        {
-          defender: "Disable real-time protection",
-          "after-purchase": "After purchase",
-          download: "Downloading the program",
-          activate: "Key activation",
-          support: "Support",
-        },
-        { game: "ESP setup", settings: "Overlay & radar", regions: "Hotkeys" },
-      ),
-      s01p: "Before installing, turn off Windows real-time protection. Do it manually through the system settings:",
-      s01path: ["Settings", "Update & Security", "Windows Security", "Virus & threat protection", "Manage settings", "Turn off real-time protection"],
-      s02p: "After payment you’ll receive an activation key and this guide. The key looks like this:",
-      s03p: "Download the launcher with the “Download” button in the launcher block, then install or run the app once it finishes downloading.",
-      s04p: "Go back to the program and paste the activation key you received into the corresponding field.",
-      s05p: TODO_EN,
-      s05subRes: "", s05card1label: "", s05card1val: "", s05card2label: "", s05card2val: "",
-      s05callout: "", s05subLang: "", s05langPre: "", s05langPost: "",
-      s06p: TODO_EN,
-      s06subSpeed: "", s06subAmmo: "", s06subTrading: "", s06subLang: "",
-      speed: [], ammo: [], trading: [], language: [],
-      s07p: TODO_EN,
-      s07subDo: "", s07p2: "", s07steps: [], s07imgAlt: "", s07callout: "",
-      s08p: "If you run into problems, contact support via Discord.",
-      s08steps: ["Go to our Discord server.", "Find the support section.", "Create a ticket or write a message.", "Describe your problem in as much detail as possible."],
-      s08button: "Open Discord",
-      s08p2: "Our team will try to help as soon as possible.",
-    },
-  };
-}
+      {
+        id: "core", n: "03", toc: "Изоляция ядра", head: "Отключите изоляцию ядра",
+        blocks: [
+          { t: "p", text: "Отключите «Целостность памяти» в изоляции ядра, затем перезагрузите компьютер." },
+          { t: "path", steps: ["Безопасность Windows", "Безопасность устройства", "Изоляция ядра", "Целостность памяти — Выкл"] },
+          { t: "callout", text: "После отключения обязательно перезагрузите ПК." },
+          { t: "callout", text: "Если установлен античит FACEIT, ESP может не запуститься вместе с ним." },
+        ],
+      },
+      {
+        id: "hyperv", n: "04", toc: "Hyper-V (Intel · 25H2)", head: "Intel и Windows 25H2: отключите Hyper-V",
+        blocks: [
+          { t: "p", text: "Владельцам процессоров Intel на Windows 25H2 нужно дополнительно отключить Hyper-V в компонентах Windows, иначе возможен синий экран (BSOD)." },
+          { t: "path", steps: ["Панель управления", "Программы", "Включение или отключение компонентов Windows", "Снять галочку Hyper-V", "ОК и перезагрузка"] },
+          { t: "callout", text: "Если синие экраны (BSOD) продолжаются, отключите виртуализацию и в BIOS: Intel VT-d / Virtualization Technology." },
+        ],
+      },
+      {
+        id: "after-purchase", n: "05", toc: "Получение ключа", head: "Действия после покупки",
+        blocks: [
+          { t: "p", text: "После оплаты вы получите ключ активации и эту инструкцию. Ключ выглядит так:" },
+          { t: "code", text: KEY_SAMPLE },
+        ],
+      },
+      {
+        id: "download", n: "06", toc: "Скачивание", head: "Скачивание программы",
+        blocks: [
+          { t: "p", text: "Скачайте лаунчер кнопкой «Скачать» в блоке лаунчера и после загрузки установите или запустите приложение." },
+        ],
+      },
+      {
+        id: "activate", n: "07", toc: "Активация ключа", head: "Активация ключа",
+        blocks: [
+          { t: "p", text: "Вернитесь в программу и вставьте полученный ключ активации в соответствующее поле." },
+        ],
+      },
+      {
+        id: "support", n: "08", toc: "Поддержка", head: "Поддержка",
+        blocks: [
+          { t: "p", text: "Если возникли проблемы, обращайтесь в поддержку через Discord." },
+          { t: "steps", items: ["Перейдите на наш Discord-сервер.", "Найдите раздел поддержки.", "Создайте тикет или напишите сообщение.", "Опишите проблему как можно подробнее."] },
+          { t: "discord", button: "Перейти в Discord", note: "Наша команда постарается помочь в кратчайшие сроки." },
+        ],
+      },
+    ],
+  },
+  en: {
+    breadcrumbHome: "Home",
+    breadcrumbCurrent: "Guide",
+    badge: "Guide",
+    title: "Setup, launch and configuration",
+    metaUpdated: "Updated 24.06.2026",
+    metaRead: "4 min read",
+    sidebarLabel: "Launcher",
+    sidebarTitle: "Download KoenFlow",
+    sidebarDesc: "Activate the key and launch.",
+    sidebarDownload: "Download",
+    tocLabel: "Contents",
+    lead: "ESP needs a bit of Windows prep: several protections have to be turned off, otherwise it won’t launch or you’ll get a blue screen. Follow the steps in order.",
+    important: "Important.",
+    leadCallout: "Read the whole guide before you start. Most issues come from skipped steps.",
+    sections: [
+      {
+        id: "defender", n: "01", toc: "Real-time protection", head: "Disable real-time protection",
+        blocks: [
+          { t: "p", text: "Before installing, turn off Windows real-time protection. Do it manually through the system settings:" },
+          { t: "path", steps: ["Settings", "Update & Security", "Windows Security", "Virus & threat protection", "Manage settings", "Turn off real-time protection"] },
+        ],
+      },
+      {
+        id: "tamper", n: "02", toc: "Tamper protection", head: "Disable tamper protection",
+        blocks: [
+          { t: "p", text: "In the same “Virus & threat protection” section, turn off Tamper Protection. Otherwise Windows will re-enable the defenses automatically." },
+          { t: "path", steps: ["Windows Security", "Virus & threat protection", "Manage settings", "Tamper Protection — Off"] },
+        ],
+      },
+      {
+        id: "core", n: "03", toc: "Core isolation", head: "Disable core isolation",
+        blocks: [
+          { t: "p", text: "Turn off Memory Integrity under Core Isolation, then restart the computer." },
+          { t: "path", steps: ["Windows Security", "Device security", "Core isolation", "Memory integrity — Off"] },
+          { t: "callout", text: "Restart the PC after turning it off." },
+          { t: "callout", text: "If the FACEIT anti-cheat is installed, ESP may not launch while it’s running." },
+        ],
+      },
+      {
+        id: "hyperv", n: "04", toc: "Hyper-V (Intel · 25H2)", head: "Intel and Windows 25H2: disable Hyper-V",
+        blocks: [
+          { t: "p", text: "On Intel CPUs with Windows 25H2 you also need to disable Hyper-V in Windows features, otherwise you may hit a blue screen (BSOD)." },
+          { t: "path", steps: ["Control Panel", "Programs", "Turn Windows features on or off", "Uncheck Hyper-V", "OK and restart"] },
+          { t: "callout", text: "If blue screens (BSOD) continue, disable virtualization in the BIOS too: Intel VT-d / Virtualization Technology." },
+        ],
+      },
+      {
+        id: "after-purchase", n: "05", toc: "Getting the key", head: "After purchase",
+        blocks: [
+          { t: "p", text: "After payment you’ll receive an activation key and this guide. The key looks like this:" },
+          { t: "code", text: KEY_SAMPLE },
+        ],
+      },
+      {
+        id: "download", n: "06", toc: "Download", head: "Downloading the program",
+        blocks: [
+          { t: "p", text: "Download the launcher with the “Download” button in the launcher block, then install or run the app once it finishes downloading." },
+        ],
+      },
+      {
+        id: "activate", n: "07", toc: "Key activation", head: "Key activation",
+        blocks: [
+          { t: "p", text: "Go back to the program and paste the activation key you received into the corresponding field." },
+        ],
+      },
+      {
+        id: "support", n: "08", toc: "Support", head: "Support",
+        blocks: [
+          { t: "p", text: "If you run into problems, contact support via Discord." },
+          { t: "steps", items: ["Go to our Discord server.", "Find the support section.", "Create a ticket or write a message.", "Describe your problem in as much detail as possible."] },
+          { t: "discord", button: "Open Discord", note: "Our team will try to help as soon as possible." },
+        ],
+      },
+    ],
+  },
+};
 
 function SectionTitle({ id, n, title }: { id: string; n: string; title: string }) {
   return (
@@ -408,6 +463,84 @@ function SectionTitle({ id, n, title }: { id: string; n: string; title: string }
       <span className="mr-xs text-brand">{n}</span>
       {title}
     </h2>
+  );
+}
+
+// Рендер блочного контента ESP-инструкции. Те же примитивы, что у трейда
+// (path-чипы, Callout, Step, code), поэтому вид разделов совпадает.
+function EspBody({
+  sections,
+  important,
+  discordUrl,
+}: {
+  sections: EspSection[];
+  important: string;
+  discordUrl: string;
+}) {
+  return (
+    <>
+      {sections.map((sec) => (
+        <section key={sec.id} className="mt-3xl">
+          <SectionTitle id={sec.id} n={sec.n} title={sec.head} />
+          {sec.blocks.map((b, i) => {
+            if (b.t === "p")
+              return (
+                <p key={i} className="mt-sm font-inter text-body text-muted">
+                  {b.text}
+                </p>
+              );
+            if (b.t === "path")
+              return (
+                <div key={i} className="mt-sm rounded-lg bg-white/5 p-sm font-inter text-body-sm text-muted">
+                  {b.steps.map((step, j) => (
+                    <span key={j}>
+                      {j > 0 && <span className="text-brand"> → </span>}
+                      {j === b.steps.length - 1 ? <span className="text-ink">{step}</span> : step}
+                    </span>
+                  ))}
+                </div>
+              );
+            if (b.t === "callout")
+              return (
+                <Callout key={i} label={important}>
+                  {b.text}
+                </Callout>
+              );
+            if (b.t === "code")
+              return (
+                <code
+                  key={i}
+                  className="mt-sm inline-block rounded-md border border-white/10 bg-white/5 px-sm py-2xs font-mono text-body tracking-widest text-ink"
+                >
+                  {b.text}
+                </code>
+              );
+            if (b.t === "steps")
+              return (
+                <ul key={i} className="mt-sm flex list-decimal flex-col gap-2xs pl-md marker:text-brand marker:font-bold">
+                  {b.items.map((step, j) => (
+                    <Step key={j}>{step}</Step>
+                  ))}
+                </ul>
+              );
+            // discord
+            return (
+              <div key={i}>
+                <a
+                  href={discordUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-md inline-flex h-lg items-center justify-center rounded-lg border border-white/20 bg-white/5 px-md font-inter text-button uppercase text-white transition-colors hover:bg-white/10"
+                >
+                  {b.button}
+                </a>
+                <p className="mt-sm font-inter text-body-sm text-muted">{b.note}</p>
+              </div>
+            );
+          })}
+        </section>
+      ))}
+    </>
   );
 }
 
@@ -464,8 +597,15 @@ export default async function InstructionsPage({
   const lang = await getServerLang();
   const product = resolveProduct((await searchParams).p);
   const meta = PRODUCTS[product];
-  const c = GUIDES[product][lang];
-  const sections = SECTION_META.map((m) => ({ ...m, title: c.toc[m.id] }));
+  const isEsp = product === "esp";
+  // Общая «обёртка» страницы (хлебные крошки, бейдж, заголовок, сайдбар, TOC)
+  // одинакова у обоих продуктов — берём поля из выбранного гайда структурно.
+  const tc = TRADING_GUIDE[lang];
+  const ec = ESP_GUIDE[lang];
+  const chrome = isEsp ? ec : tc;
+  const sections = isEsp
+    ? ec.sections.map((s) => ({ id: s.id, n: s.n, title: s.toc }))
+    : SECTION_META.map((m) => ({ ...m, title: tc.toc[m.id] }));
 
   return (
     <div className="relative min-h-screen text-ink">
@@ -476,27 +616,27 @@ export default async function InstructionsPage({
         {/* Breadcrumb */}
         <nav className="flex items-center gap-2xs font-inter text-label uppercase text-muted">
           <a href="/" className="transition-colors hover:text-ink">
-            {c.breadcrumbHome}
+            {chrome.breadcrumbHome}
           </a>
           <span className="text-white/25">/</span>
-          <span className="text-brand">{c.breadcrumbCurrent}</span>
+          <span className="text-brand">{chrome.breadcrumbCurrent}</span>
         </nav>
 
         {/* Badge */}
         <span className="mt-sm inline-block rounded-full bg-brand/15 px-sm py-2xs font-inter text-label uppercase text-brand">
-          {c.badge}
+          {chrome.badge}
         </span>
 
         {/* Title */}
-        <h1 className="mt-sm font-inter text-h1 text-ink">{c.title}</h1>
+        <h1 className="mt-sm font-inter text-h1 text-ink">{chrome.title}</h1>
 
         {/* Meta */}
         <div className="mt-xs flex flex-wrap items-center gap-2xs font-inter text-label uppercase text-muted">
           <span>{meta.label[lang]}</span>
           <span className="text-white/25">·</span>
-          <span>{c.metaUpdated}</span>
+          <span>{chrome.metaUpdated}</span>
           <span className="text-white/25">·</span>
-          <span>{c.metaRead}</span>
+          <span>{chrome.metaRead}</span>
         </div>
 
         {/* Hero image */}
@@ -508,20 +648,13 @@ export default async function InstructionsPage({
         <div className="mt-3xl flex flex-col gap-lg lg:flex-row lg:gap-3xl">
           {/* Sidebar */}
           <aside className="flex flex-col gap-md lg:sticky lg:top-[136px] lg:w-72 lg:shrink-0 lg:self-start">
-            {/* Выбор продукта — меняет весь гайд, версию и размер загрузки */}
-            <ProductSwitcher
-              current={product}
-              lang={lang}
-              label={lang === "ru" ? "Продукт" : "Product"}
-            />
-
             <div className="rounded-2xl border border-white/10 bg-white/5 p-sm">
               <span className="font-inter text-label uppercase text-muted">
-                {c.sidebarLabel}
+                {chrome.sidebarLabel}
               </span>
-              <h3 className="mt-2xs font-inter text-h4 text-ink">{c.sidebarTitle}</h3>
+              <h3 className="mt-2xs font-inter text-h4 text-ink">{chrome.sidebarTitle}</h3>
               <p className="mt-2xs font-inter text-body-sm text-muted">
-                {c.sidebarDesc}
+                {chrome.sidebarDesc}
               </p>
               <div className="mt-sm flex items-center gap-2xs font-inter text-label uppercase text-muted">
                 <span>{meta.download.version}</span>
@@ -536,13 +669,13 @@ export default async function InstructionsPage({
                 href={meta.download.url}
                 className="mt-sm inline-flex h-lg w-full items-center justify-center rounded-lg bg-white px-sm font-inter text-button uppercase text-black transition-colors hover:bg-white/90"
               >
-                {c.sidebarDownload}
+                {chrome.sidebarDownload}
               </a>
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-white/5 p-sm">
               <span className="font-inter text-label uppercase text-muted">
-                {c.tocLabel}
+                {chrome.tocLabel}
               </span>
               <TocList sections={sections} />
             </div>
@@ -551,18 +684,23 @@ export default async function InstructionsPage({
           {/* Content */}
           <div className="col-content flex-1">
             {/* Lead + warning */}
-            <p className="font-inter text-lead text-ink/80">{c.lead}</p>
-            <Callout label={c.important}>{c.leadCallout}</Callout>
+            <p className="font-inter text-lead text-ink/80">{chrome.lead}</p>
+            <Callout label={chrome.important}>{chrome.leadCallout}</Callout>
 
+            {isEsp && (
+              <EspBody sections={ec.sections} important={chrome.important} discordUrl={DISCORD_URL} />
+            )}
+
+            {!isEsp && (<>
             {/* 01 */}
             <section className="mt-3xl">
-              <SectionTitle id="defender" n="01" title={c.head["defender"]} />
-              <p className="mt-sm font-inter text-body text-muted">{c.s01p}</p>
+              <SectionTitle id="defender" n="01" title={tc.head["defender"]} />
+              <p className="mt-sm font-inter text-body text-muted">{tc.s01p}</p>
               <div className="mt-sm rounded-lg bg-white/5 p-sm font-inter text-body-sm text-muted">
-                {c.s01path.map((step, i) => (
+                {tc.s01path.map((step, i) => (
                   <span key={i}>
                     {i > 0 && <span className="text-brand"> → </span>}
-                    {i === c.s01path.length - 1 ? (
+                    {i === tc.s01path.length - 1 ? (
                       <span className="text-ink">{step}</span>
                     ) : (
                       step
@@ -574,8 +712,8 @@ export default async function InstructionsPage({
 
             {/* 02 */}
             <section className="mt-3xl">
-              <SectionTitle id="after-purchase" n="02" title={c.head["after-purchase"]} />
-              <p className="mt-sm font-inter text-body text-muted">{c.s02p}</p>
+              <SectionTitle id="after-purchase" n="02" title={tc.head["after-purchase"]} />
+              <p className="mt-sm font-inter text-body text-muted">{tc.s02p}</p>
               <code className="mt-sm inline-block rounded-md border border-white/10 bg-white/5 px-sm py-2xs font-mono text-body tracking-widest text-ink">
                 YC21-EPBM-FOAD-I82D
               </code>
@@ -583,45 +721,45 @@ export default async function InstructionsPage({
 
             {/* 03 */}
             <section className="mt-3xl">
-              <SectionTitle id="download" n="03" title={c.head["download"]} />
-              <p className="mt-sm font-inter text-body text-muted">{c.s03p}</p>
+              <SectionTitle id="download" n="03" title={tc.head["download"]} />
+              <p className="mt-sm font-inter text-body text-muted">{tc.s03p}</p>
             </section>
 
             {/* 04 */}
             <section className="mt-3xl">
-              <SectionTitle id="activate" n="04" title={c.head["activate"]} />
-              <p className="mt-sm font-inter text-body text-muted">{c.s04p}</p>
+              <SectionTitle id="activate" n="04" title={tc.head["activate"]} />
+              <p className="mt-sm font-inter text-body text-muted">{tc.s04p}</p>
             </section>
 
             {/* 05 */}
             <section className="mt-3xl">
-              <SectionTitle id="game" n="05" title={c.head["game"]} />
-              <p className="mt-sm font-inter text-body text-muted">{c.s05p}</p>
+              <SectionTitle id="game" n="05" title={tc.head["game"]} />
+              <p className="mt-sm font-inter text-body text-muted">{tc.s05p}</p>
 
-              {c.showResolutionCards && (
+              {tc.showResolutionCards && (
                 <>
-                  <h3 className="mt-md font-inter text-h4 text-ink">{c.s05subRes}</h3>
+                  <h3 className="mt-md font-inter text-h4 text-ink">{tc.s05subRes}</h3>
                   <div className="mt-sm flex flex-col gap-sm sm:flex-row">
                     <div className="flex-1 rounded-lg border border-white/10 bg-white/5 p-sm">
-                      <p className="font-inter text-body-sm text-muted">{c.s05card1label}</p>
+                      <p className="font-inter text-body-sm text-muted">{tc.s05card1label}</p>
                       <p className="mt-2xs font-inter text-body font-bold text-ink">
-                        {c.s05card1val}
+                        {tc.s05card1val}
                       </p>
                     </div>
                     <div className="flex-1 rounded-lg border border-white/10 bg-white/5 p-sm">
-                      <p className="font-inter text-body-sm text-muted">{c.s05card2label}</p>
+                      <p className="font-inter text-body-sm text-muted">{tc.s05card2label}</p>
                       <p className="mt-2xs font-inter text-body font-bold text-ink">
-                        {c.s05card2val}
+                        {tc.s05card2val}
                       </p>
                     </div>
                   </div>
-                  <Callout label={c.important}>{c.s05callout}</Callout>
+                  <Callout label={chrome.important}>{tc.s05callout}</Callout>
 
-                  <h3 className="mt-md font-inter text-h4 text-ink">{c.s05subLang}</h3>
+                  <h3 className="mt-md font-inter text-h4 text-ink">{tc.s05subLang}</h3>
                   <p className="mt-sm font-inter text-body text-muted">
-                    {c.s05langPre}
+                    {tc.s05langPre}
                     <span className="text-ink">English</span>
-                    {c.s05langPost}
+                    {tc.s05langPost}
                   </p>
                 </>
               )}
@@ -629,15 +767,15 @@ export default async function InstructionsPage({
 
             {/* 06 */}
             <section className="mt-3xl">
-              <SectionTitle id="settings" n="06" title={c.head["settings"]} />
-              <p className="mt-sm font-inter text-body text-muted">{c.s06p}</p>
+              <SectionTitle id="settings" n="06" title={tc.head["settings"]} />
+              <p className="mt-sm font-inter text-body text-muted">{tc.s06p}</p>
 
               <div>
                 {[
-                  { h: c.s06subSpeed, items: c.speed, mt: "mt-md" },
-                  { h: c.s06subAmmo, items: c.ammo, mt: "mt-lg" },
-                  { h: c.s06subTrading, items: c.trading, mt: "mt-lg" },
-                  { h: c.s06subLang, items: c.language, mt: "mt-lg" },
+                  { h: tc.s06subSpeed, items: tc.speed, mt: "mt-md" },
+                  { h: tc.s06subAmmo, items: tc.ammo, mt: "mt-lg" },
+                  { h: tc.s06subTrading, items: tc.trading, mt: "mt-lg" },
+                  { h: tc.s06subLang, items: tc.language, mt: "mt-lg" },
                 ]
                   .filter((g) => g.items.length > 0)
                   .map((g) => (
@@ -645,7 +783,7 @@ export default async function InstructionsPage({
                       <h3 className={`${g.mt} font-inter text-h4 text-ink`}>{g.h}</h3>
                       <div className="mt-sm flex flex-col gap-sm">
                         {g.items.map((s) => (
-                          <Setting key={s.name} {...s} defaultLabel={c.defaultLabel} />
+                          <Setting key={s.name} {...s} defaultLabel={tc.defaultLabel} />
                         ))}
                       </div>
                     </div>
@@ -655,32 +793,32 @@ export default async function InstructionsPage({
 
             {/* 07 */}
             <section className="mt-3xl">
-              <SectionTitle id="regions" n="07" title={c.head["regions"]} />
-              <p className="mt-sm font-inter text-body text-muted">{c.s07p}</p>
+              <SectionTitle id="regions" n="07" title={tc.head["regions"]} />
+              <p className="mt-sm font-inter text-body text-muted">{tc.s07p}</p>
 
-              {c.showFavoritesImage && (
+              {tc.showFavoritesImage && (
                 <>
-                  <h3 className="mt-md font-inter text-h4 text-ink">{c.s07subDo}</h3>
-                  <p className="mt-sm font-inter text-body text-muted">{c.s07p2}</p>
+                  <h3 className="mt-md font-inter text-h4 text-ink">{tc.s07subDo}</h3>
+                  <p className="mt-sm font-inter text-body text-muted">{tc.s07p2}</p>
                   <ul className="mt-sm flex list-disc flex-col gap-2xs pl-md marker:text-brand">
-                    {c.s07steps.map((step, i) => (
+                    {tc.s07steps.map((step, i) => (
                       <Step key={i}>{step}</Step>
                     ))}
                   </ul>
                   <div className="mt-md overflow-hidden rounded-2xl border border-white/10">
-                    <img src="/instructions-favorites.webp" alt={c.s07imgAlt} loading="lazy" decoding="async" className="block w-full" />
+                    <img src="/instructions-favorites.webp" alt={tc.s07imgAlt} loading="lazy" decoding="async" className="block w-full" />
                   </div>
-                  <Callout label={c.important}>{c.s07callout}</Callout>
+                  <Callout label={chrome.important}>{tc.s07callout}</Callout>
                 </>
               )}
             </section>
 
             {/* 08 */}
             <section className="mt-3xl">
-              <SectionTitle id="support" n="08" title={c.head["support"]} />
-              <p className="mt-sm font-inter text-body text-muted">{c.s08p}</p>
+              <SectionTitle id="support" n="08" title={tc.head["support"]} />
+              <p className="mt-sm font-inter text-body text-muted">{tc.s08p}</p>
               <ul className="mt-sm flex list-decimal flex-col gap-2xs pl-md marker:text-brand marker:font-bold">
-                {c.s08steps.map((step, i) => (
+                {tc.s08steps.map((step, i) => (
                   <Step key={i}>{step}</Step>
                 ))}
               </ul>
@@ -690,10 +828,11 @@ export default async function InstructionsPage({
                 rel="noreferrer"
                 className="mt-md inline-flex h-lg items-center justify-center rounded-lg border border-white/20 bg-white/5 px-md font-inter text-button uppercase text-white transition-colors hover:bg-white/10"
               >
-                {c.s08button}
+                {tc.s08button}
               </a>
-              <p className="mt-sm font-inter text-body-sm text-muted">{c.s08p2}</p>
+              <p className="mt-sm font-inter text-body-sm text-muted">{tc.s08p2}</p>
             </section>
+            </>)}
           </div>
         </div>
       </article>
