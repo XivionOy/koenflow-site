@@ -64,7 +64,7 @@ export default function Navbar({ lang }: { lang: Lang }) {
               {instrOpen && (
                 <div
                   role="menu"
-                  className="absolute left-0 top-[calc(100%+14px)] z-50 w-64 overflow-hidden rounded-xl border border-white/10 bg-[#0c0912] p-3xs shadow-[0_18px_44px_rgba(0,0,0,0.5)]"
+                  className="absolute left-0 top-[calc(100%+14px)] z-50 w-max overflow-hidden rounded-xl border border-white/10 bg-[#0c0912] p-3xs shadow-[0_18px_44px_rgba(0,0,0,0.5)]"
                 >
                   {PRODUCT_ORDER.map((id) => (
                     <a
@@ -72,9 +72,9 @@ export default function Navbar({ lang }: { lang: Lang }) {
                       href={`/instructions?p=${id}`}
                       role="menuitem"
                       onClick={() => setInstrOpen(false)}
-                      className="block rounded-lg px-sm py-xs font-inter text-body-sm text-muted transition-colors hover:bg-white/5 hover:text-white"
+                      className="block whitespace-nowrap rounded-lg px-sm py-xs font-inter text-body-sm text-muted transition-colors hover:bg-white/5 hover:text-white"
                     >
-                      {PRODUCTS[id].label[lang]}
+                      {PRODUCTS[id].label}
                     </a>
                   ))}
                 </div>
@@ -165,7 +165,7 @@ export default function Navbar({ lang }: { lang: Lang }) {
                   onClick={() => setMenuOpen(false)}
                   className="font-inter text-body uppercase text-white/70 transition-colors hover:text-white"
                 >
-                  {PRODUCTS[id].short[lang]}
+                  {PRODUCTS[id].short}
                 </a>
               ))}
             </div>

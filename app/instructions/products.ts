@@ -1,5 +1,3 @@
-import { type Lang } from "../lib/i18n";
-
 // Продукты, у которых есть страница инструкции. Ключ уходит в ?p=<id>,
 // поэтому менять его нельзя без редиректа со старого значения.
 export type Product = "trading" | "esp";
@@ -9,10 +7,11 @@ export const DEFAULT_PRODUCT: Product = "trading";
 
 export type ProductMeta = {
   id: Product;
-  // Подпись в дропдауне и в meta-строке под заголовком.
-  label: Record<Lang, string>;
-  // Короткое имя для селектора, если полное слишком длинное.
-  short: Record<Lang, string>;
+  // Имя продукта — всегда на английском (бренд игры), вне зависимости от
+  // языка сайта. Полное для дропдауна/мета-строки, короткое для мобильного
+  // меню и заголовка вкладки.
+  label: string;
+  short: string;
   // Данные карточки загрузки — у продуктов свои версия/размер.
   download: { url: string; version: string; sizeMb: number };
 };
@@ -20,20 +19,14 @@ export type ProductMeta = {
 export const PRODUCTS: Record<Product, ProductMeta> = {
   trading: {
     id: "trading",
-    label: {
-      en: "Arena Breakout: Infinite · Trading",
-      ru: "Arena Breakout: Infinite · Трейд",
-    },
-    short: { en: "Trading", ru: "Трейд" },
+    label: "Arena Breakout: Infinite Trading",
+    short: "Trading",
     download: { url: "/downloads/KoenFlowLauncher-latest.exe", version: "V5.1.5", sizeMb: 24 },
   },
   esp: {
     id: "esp",
-    label: {
-      en: "Arena Breakout: Infinite · ESP",
-      ru: "Arena Breakout: Infinite · ESP",
-    },
-    short: { en: "ESP", ru: "ESP" },
+    label: "Arena Breakout: Infinite ESP",
+    short: "ESP",
     // Тот же лаунчер раздаёт оба продукта; версию/размер поправить, когда
     // придёт реальная сборка ESP.
     download: { url: "/downloads/KoenFlowLauncher-latest.exe", version: "V5.1.5", sizeMb: 24 },

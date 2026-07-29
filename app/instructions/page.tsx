@@ -20,7 +20,7 @@ export async function generateMetadata({
   const base = pageMetadata("instructions", lang, path);
   // Заголовок вкладки несёт имя продукта, чтобы две инструкции не сливались в
   // выдаче и в истории браузера.
-  return { ...base, title: `${PRODUCTS[product].short[lang]} · ${base.title}` };
+  return { ...base, title: `${PRODUCTS[product].short} · ${base.title}` };
 }
 
 const SECTION_META = [
@@ -632,7 +632,7 @@ export default async function InstructionsPage({
 
         {/* Meta */}
         <div className="mt-xs flex flex-wrap items-center gap-2xs font-inter text-label uppercase text-muted">
-          <span>{meta.label[lang]}</span>
+          <span>{meta.label}</span>
           <span className="text-white/25">·</span>
           <span>{chrome.metaUpdated}</span>
           <span className="text-white/25">·</span>
