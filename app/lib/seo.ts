@@ -6,7 +6,7 @@ export const SITE_URL = "https://koenflow.com";
 
 type Copy = { title: string; description: string };
 
-export const SEO: Record<"home" | "instructions" | "partners", Record<Lang, Copy>> = {
+export const SEO: Record<"home" | "instructions" | "partners" | "brand", Record<Lang, Copy>> = {
   home: {
     en: {
       title: "KoenFlow · Automated Arena Breakout trading bot",
@@ -43,12 +43,24 @@ export const SEO: Record<"home" | "instructions" | "partners", Record<Lang, Copy
         "Станьте партнёром KoenFlow. Перепродавайте ключи, приводите аудиторию или интегрируйте бота и зарабатывайте долю с каждой продажи. Проверенные магазины, продавцы, сообщества и медиа.",
     },
   },
+  brand: {
+    en: {
+      title: "Brand kit and download link",
+      description:
+        "Logos, usage rules and a ready to paste download button for shops that carry KoenFlow. The launcher downloads straight from our servers, so your customer never leaves your page.",
+    },
+    ru: {
+      title: "Логотипы и ссылка на скачивание",
+      description:
+        "Логотипы, правила использования и готовая кнопка скачивания для магазинов, которые продают KoenFlow. Лаунчер качается напрямую с наших серверов, покупатель не уходит с вашей страницы.",
+    },
+  },
 };
 
 // Builds per-page Metadata for sub-pages (title gets the "%s · KoenFlow"
 // template from the root layout; OG/Twitter carry the full title).
 export function pageMetadata(
-  page: "instructions" | "partners",
+  page: "instructions" | "partners" | "brand",
   lang: Lang,
   path: string,
 ): Metadata {
