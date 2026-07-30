@@ -15,11 +15,15 @@ function Bullet() {
   return <span aria-hidden className="mt-[0.5rem] h-1 w-1 shrink-0 rounded-full bg-brand" />;
 }
 
-// Both endpoints are already public on the backend. The 443 path in front of
-// them is what makes the link usable from a shop's storefront; see
-// deploy/koenflow-site.conf.
-const DOWNLOAD_URL = "https://koenflow.com/api/public/launcher/download";
-const MANIFEST_URL = "https://koenflow.com/api/public/launcher/manifest";
+// The installer a person downloads and runs. This is the same file our own
+// download button uses, and it is already public.
+//
+// NOT /api/public/launcher/download. That pair (manifest + download) is the
+// launcher's SELF-UPDATE channel: HttpLauncherApiClient reads the manifest and
+// BackendLauncherUpdateService unpacks the result into the self-update
+// directory. It serves launcher-<version>.zip, currently 180 MB, which is not
+// something a customer can run.
+const DOWNLOAD_URL = "https://koenflow.com/downloads/KoenFlowLauncher-latest.exe";
 
 const SNIPPET = `<a href="${DOWNLOAD_URL}">Download KoenFlow Launcher</a>`;
 
@@ -49,15 +53,12 @@ const T = {
       "Не встраивайте знак в свой логотип и не делайте из него составной знак.",
     ],
     linkTitle: "Кнопка скачивания",
-    linkLead: "Обычная ссылка. Файл отдаётся с заголовком Content-Disposition: attachment, поэтому скачивание начинается сразу и покупатель остаётся на вашей странице. Редиректа на koenflow.com не будет.",
+    linkLead: "Обычная ссылка на установщик. Браузер начинает скачивание сразу, покупатель остаётся на вашей странице, редиректа на koenflow.com не будет.",
     copy: "Скопировать",
     copied: "Скопировано",
-    manifestTitle: "Версия и размер",
-    manifestLead: "Не прописывайте версию руками, она устареет. Запросите манифест и покажите то, что в нём:",
-    manifestNote: "Отвечает JSON с полями version, fileSizeBytes, sha256Hash, releasedAt и releaseNotes. Обновляется сам, как только мы публикуем новый релиз.",
     notesTitle: "Что важно знать",
     notes: [
-      "Ссылка всегда отдаёт актуальный стабильный релиз. Отдельная ссылка на конкретную версию не нужна.",
+      "Ссылка всегда отдаёт актуальную сборку, поэтому версию у себя лучше не писать вообще: отдельной ссылки на конкретную версию нет и номер быстро устареет.",
       "Не размещайте копию файла у себя. Она устареет, и у покупателя сломается автообновление лаунчера.",
       "Лаунчер бесплатный, ключ он спрашивает при первом запуске. Скачивание можно открывать всем, не только после оплаты.",
       "Если нужен свой домен вида dl.вашмагазин.com, напишите нам, настроим CNAME на нашу сторону.",
@@ -82,15 +83,12 @@ const T = {
       "Do not build the mark into a logo of your own or make it part of a combined mark.",
     ],
     linkTitle: "Download button",
-    linkLead: "A plain link. The file is served with Content-Disposition: attachment, so the download starts immediately and your customer stays on your page. There is no redirect to koenflow.com.",
+    linkLead: "A plain link to the installer. The browser starts the download immediately, your customer stays on your page, and there is no redirect to koenflow.com.",
     copy: "Copy",
     copied: "Copied",
-    manifestTitle: "Version and size",
-    manifestLead: "Do not hard-code the version, it will go stale. Request the manifest and show what it returns:",
-    manifestNote: "Responds with JSON carrying version, fileSizeBytes, sha256Hash, releasedAt and releaseNotes. It updates itself the moment we publish a new release.",
     notesTitle: "Worth knowing",
     notes: [
-      "The link always serves the current stable release. You do not need a separate link per version.",
+      "The link always serves the current build, so it is best not to print a version number at all: there is no per-version link and the number goes stale quickly.",
       "Do not host a copy of the file yourself. It will go stale and it breaks the launcher's self-update for your customer.",
       "The launcher is free and asks for a key on first run, so the download can be open to everyone, not only to buyers.",
       "If you want your own domain such as dl.yourshop.com, tell us and we will set up a CNAME on our side.",
@@ -227,38 +225,6 @@ export default function BrandClient({ lang }: { lang: Lang }) {
             <Download className="h-4 w-4" />
             {lang === "ru" ? "Проверить ссылку" : "Try the link"}
           </a>
-        </section>
-
-        {/* ------------------------------------------------------- Manifest */}
-        <section className="mt-3xl">
-          <h2 className="font-inter text-h1 text-ink">{t.manifestTitle}</h2>
-          <p className="mt-2xs max-w-[52rem] font-inter text-body-sm text-muted">
-            {t.manifestLead}
-          </p>
-
-          <div className="mt-md overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-            <div className="flex items-center justify-between gap-sm border-b border-white/10 px-sm py-xs">
-              <span className="font-inter text-caption uppercase text-muted">GET</span>
-              <button
-                type="button"
-                onClick={() => copy(MANIFEST_URL, "manifest")}
-                className="inline-flex items-center gap-3xs font-inter text-caption uppercase text-muted transition-colors hover:text-ink"
-              >
-                {copied === "manifest" ? (
-                  <Check className="h-3.5 w-3.5 text-brand" />
-                ) : (
-                  <Copy className="h-3.5 w-3.5" />
-                )}
-                {copied === "manifest" ? t.copied : t.copy}
-              </button>
-            </div>
-            <pre className="overflow-x-auto px-sm py-sm font-mono text-body-sm text-ink">
-              {MANIFEST_URL}
-            </pre>
-          </div>
-          <p className="mt-xs max-w-[52rem] font-inter text-body-sm text-muted">
-            {t.manifestNote}
-          </p>
         </section>
 
         {/* ---------------------------------------------------------- Notes */}
