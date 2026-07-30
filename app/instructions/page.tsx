@@ -370,7 +370,13 @@ const ESP_GUIDE: Record<Lang, EspCopy> = {
         ],
       },
       {
-        id: "support", n: "08", toc: "Поддержка", head: "Поддержка",
+        id: "menu", n: "08", toc: "Открыть меню", head: "Открыть меню в игре",
+        blocks: [
+          { t: "p", text: "Меню ESP открывается и скрывается клавишей Home прямо в игре. Настройки применяются сразу, перезапуск не требуется." },
+        ],
+      },
+      {
+        id: "support", n: "09", toc: "Поддержка", head: "Поддержка",
         blocks: [
           { t: "p", text: "Если возникли проблемы, обращайтесь в поддержку через Discord." },
           { t: "steps", items: ["Перейдите на наш Discord-сервер.", "Найдите раздел поддержки.", "Создайте тикет или напишите сообщение.", "Опишите проблему как можно подробнее."] },
@@ -446,7 +452,13 @@ const ESP_GUIDE: Record<Lang, EspCopy> = {
         ],
       },
       {
-        id: "support", n: "08", toc: "Support", head: "Support",
+        id: "menu", n: "08", toc: "Open the menu", head: "Open the menu in-game",
+        blocks: [
+          { t: "p", text: "The ESP menu opens and hides with the Home key inside the game. Changes apply live, no restart needed." },
+        ],
+      },
+      {
+        id: "support", n: "09", toc: "Support", head: "Support",
         blocks: [
           { t: "p", text: "If you run into problems, contact support via Discord." },
           { t: "steps", items: ["Go to our Discord server.", "Find the support section.", "Create a ticket or write a message.", "Describe your problem in as much detail as possible."] },
