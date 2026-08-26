@@ -469,6 +469,177 @@ const ESP_GUIDE: Record<Lang, EspCopy> = {
   },
 };
 
+// STALCRAFT: X — ESP. Отдельный продукт, но структурно похож на ABI ESP —
+// используем тот же EspCopy тип (список секций + блоки). Отличается:
+//   • нет требования отключать Core Isolation / Hyper-V — chams-DLL хучит
+//     OpenGL из user-mode, никакого BYOVD / kernel-driver не участвует, и
+//     мы это подтвердили на боевых машинах юзеров.
+//   • отдельные шаги про F12 / Numpad для игровых хоткеев.
+const STALCRAFT_ESP_GUIDE: Record<Lang, EspCopy> = {
+  ru: {
+    breadcrumbHome: "Главная",
+    breadcrumbCurrent: "Инструкция",
+    badge: "Инструкция",
+    title: "Подготовка, запуск и настройка",
+    metaUpdated: "Обновлено 26.08.2026",
+    metaRead: "3 мин чтения",
+    sidebarLabel: "Лаунчер",
+    sidebarTitle: "Скачать KoenFlow",
+    sidebarDesc: "Активируйте ключ и запускайте.",
+    sidebarDownload: "Скачать",
+    tocLabel: "Содержание",
+    lead: "STALCRAFT ESP подсвечивает противников, мутантов и лут прямо в игре. Установка занимает пару минут — пройдите шаги по порядку.",
+    important: "Важно.",
+    leadCallout: "Прочитайте инструкцию полностью перед выполнением. Большинство проблем возникает из-за пропущенных шагов.",
+    sections: [
+      {
+        id: "defender", n: "01", toc: "Защита в реальном времени", head: "Отключите защиту в реальном времени",
+        blocks: [
+          { t: "p", text: "Перед установкой отключите защиту Windows в реальном времени. Делайте это вручную через системные настройки:" },
+          { t: "path", steps: ["Параметры", "Обновление и безопасность", "Безопасность Windows", "Защита от вирусов и угроз", "Управление настройками", "Выключить защиту в реальном времени"] },
+        ],
+      },
+      {
+        id: "tamper", n: "02", toc: "Защита от подделки", head: "Отключите защиту от подделки",
+        blocks: [
+          { t: "p", text: "Там же, в разделе «Защита от вирусов и угроз», отключите «Защиту от подделки» (Tamper Protection). Иначе Windows включит защиту обратно автоматически." },
+          { t: "path", steps: ["Безопасность Windows", "Защита от вирусов и угроз", "Управление настройками", "Защита от подделки — Выкл"] },
+        ],
+      },
+      {
+        id: "after-purchase", n: "03", toc: "Получение ключа", head: "Действия после покупки",
+        blocks: [
+          { t: "p", text: "После оплаты вы получите ключ активации и эту инструкцию. Ключ выглядит так:" },
+          { t: "code", text: KEY_SAMPLE },
+        ],
+      },
+      {
+        id: "download", n: "04", toc: "Скачивание", head: "Скачивание программы",
+        blocks: [
+          { t: "p", text: "Скачайте лаунчер кнопкой «Скачать» в блоке лаунчера и после загрузки установите или запустите приложение." },
+        ],
+      },
+      {
+        id: "activate", n: "05", toc: "Активация ключа", head: "Активация ключа",
+        blocks: [
+          { t: "p", text: "Вставьте полученный ключ активации в лаунчере и нажмите «Активировать»." },
+        ],
+      },
+      {
+        id: "launch", n: "06", toc: "Запуск", head: "Запуск ESP и игры",
+        blocks: [
+          { t: "p", text: "В библиотеке лаунчера нажмите Launch на карточке STALCRAFT ESP — запустится окно Nightvex (панель настроек цветов и категорий). Затем запустите STALCRAFT обычным способом. ESP автоматически инжектится в игру, статус в шапке панели поменяется с «Ждёт игру» на «Инжектирован»." },
+          { t: "callout", text: "STALCRAFT можно запускать в любой момент до или после запуска ESP — инжектор ловит игру в течение секунды после её появления." },
+        ],
+      },
+      {
+        id: "hotkeys", n: "07", toc: "Игровые хоткеи", head: "Хоткеи в игре",
+        blocks: [
+          { t: "p", text: "Хоткеи работают только когда окно STALCRAFT в фокусе (чтобы не мешать при работе с другими окнами):" },
+          { t: "steps", items: ["F12 — включить или выключить покраску целиком (мастер-свитч).", "Numpad 1–8 — включить или выключить отдельную категорию: тела противников, снаряжение, мутанты, маркеры, предметы, лут, аномалии.", "F9 — циклическое переключение режима отрисовки (Standard → Additive → HDR → Wireframe)."] },
+          { t: "callout", text: "Короткий тап F12, не удерживать: auto-repeat клавиатуры за секунду 15 раз переключит chams туда-сюда и мастер вернётся в исходное состояние." },
+        ],
+      },
+      {
+        id: "settings", n: "08", toc: "Настройка цветов", head: "Настройка категорий и цветов",
+        blocks: [
+          { t: "p", text: "В окне Nightvex во вкладке «Категории» вы можете:" },
+          { t: "steps", items: ["Включить или выключить любую категорию (Тела противников, Снаряжение, Мутанты, Маркеры, Предметы, Лут, Аномалии).", "Настроить цвет и интенсивность (BASE — плоский цвет, GLOW — свечение поверх) для каждой категории.", "Во вкладке «Режимы» выбрать способ отрисовки: Standard (стабильно), Additive (ярко), Ultra HDR (сочно), Wireframe (силуэт)."] },
+        ],
+      },
+      {
+        id: "support", n: "09", toc: "Поддержка", head: "Поддержка",
+        blocks: [
+          { t: "p", text: "Если возникли проблемы, обращайтесь в поддержку через Discord." },
+          { t: "steps", items: ["Перейдите на наш Discord-сервер.", "Найдите раздел поддержки.", "Создайте тикет или напишите сообщение.", "Опишите проблему как можно подробнее."] },
+          { t: "discord", button: "Перейти в Discord", note: "Наша команда постарается помочь в кратчайшие сроки." },
+        ],
+      },
+    ],
+  },
+  en: {
+    breadcrumbHome: "Home",
+    breadcrumbCurrent: "Guide",
+    badge: "Guide",
+    title: "Setup, launch and configuration",
+    metaUpdated: "Updated 26.08.2026",
+    metaRead: "3 min read",
+    sidebarLabel: "Launcher",
+    sidebarTitle: "Download KoenFlow",
+    sidebarDesc: "Activate the key and launch.",
+    sidebarDownload: "Download",
+    tocLabel: "Contents",
+    lead: "STALCRAFT ESP highlights enemies, mutants and loot right in the game. Installation takes a couple of minutes — follow the steps in order.",
+    important: "Important.",
+    leadCallout: "Read the whole guide before you start. Most issues come from skipped steps.",
+    sections: [
+      {
+        id: "defender", n: "01", toc: "Real-time protection", head: "Disable real-time protection",
+        blocks: [
+          { t: "p", text: "Before installing, turn off Windows real-time protection. Do it manually through the system settings:" },
+          { t: "path", steps: ["Settings", "Update & Security", "Windows Security", "Virus & threat protection", "Manage settings", "Turn off real-time protection"] },
+        ],
+      },
+      {
+        id: "tamper", n: "02", toc: "Tamper protection", head: "Disable tamper protection",
+        blocks: [
+          { t: "p", text: "In the same “Virus & threat protection” section, turn off Tamper Protection. Otherwise Windows will re-enable the defenses automatically." },
+          { t: "path", steps: ["Windows Security", "Virus & threat protection", "Manage settings", "Tamper Protection — Off"] },
+        ],
+      },
+      {
+        id: "after-purchase", n: "03", toc: "Getting the key", head: "After purchase",
+        blocks: [
+          { t: "p", text: "After payment you’ll receive an activation key and this guide. The key looks like this:" },
+          { t: "code", text: KEY_SAMPLE },
+        ],
+      },
+      {
+        id: "download", n: "04", toc: "Download", head: "Downloading the program",
+        blocks: [
+          { t: "p", text: "Download the launcher with the “Download” button in the launcher block, then install or run the app once it finishes downloading." },
+        ],
+      },
+      {
+        id: "activate", n: "05", toc: "Key activation", head: "Key activation",
+        blocks: [
+          { t: "p", text: "Paste the activation key you received into the launcher and click “Activate”." },
+        ],
+      },
+      {
+        id: "launch", n: "06", toc: "Launch", head: "Launch ESP and the game",
+        blocks: [
+          { t: "p", text: "In the launcher’s library click Launch on the STALCRAFT ESP card — the Nightvex window opens (the colour and category settings panel). Then start STALCRAFT normally. ESP injects into the game automatically; the status pill in the panel flips from “Waiting for game” to “Injected”." },
+          { t: "callout", text: "STALCRAFT can be launched any time before or after ESP — the injector catches the game within a second of it appearing." },
+        ],
+      },
+      {
+        id: "hotkeys", n: "07", toc: "In-game hotkeys", head: "In-game hotkeys",
+        blocks: [
+          { t: "p", text: "Hotkeys only fire while the STALCRAFT window is focused (so they don’t interfere with other apps):" },
+          { t: "steps", items: ["F12 — toggle the whole overlay on or off (master switch).", "Numpad 1–8 — toggle individual categories: enemy bodies, gear, mutants, markers, items, loot, anomalies.", "F9 — cycle through render modes (Standard → Additive → HDR → Wireframe)."] },
+          { t: "callout", text: "Quick tap on F12, don’t hold it: keyboard auto-repeat would flip chams 15 times a second and land back where it started." },
+        ],
+      },
+      {
+        id: "settings", n: "08", toc: "Colours and settings", head: "Categories and colours",
+        blocks: [
+          { t: "p", text: "In the Nightvex window, the “Categories” tab lets you:" },
+          { t: "steps", items: ["Toggle any category on or off (Enemy bodies, Gear, Mutants, Markers, Items, Loot, Anomalies).", "Set the colour and intensity (BASE — flat colour, GLOW — emissive on top) for each category.", "In the “Modes” tab pick a rendering mode: Standard (stable), Additive (bright), Ultra HDR (rich), Wireframe (outline only)."] },
+        ],
+      },
+      {
+        id: "support", n: "09", toc: "Support", head: "Support",
+        blocks: [
+          { t: "p", text: "If you run into problems, contact support via Discord." },
+          { t: "steps", items: ["Go to our Discord server.", "Find the support section.", "Create a ticket or write a message.", "Describe your problem in as much detail as possible."] },
+          { t: "discord", button: "Open Discord", note: "Our team will try to help as soon as possible." },
+        ],
+      },
+    ],
+  },
+};
+
 function SectionTitle({ id, n, title }: { id: string; n: string; title: string }) {
   return (
     <h2 id={id} className="scroll-mt-5xl font-inter text-h3 text-ink">
@@ -609,14 +780,17 @@ export default async function InstructionsPage({
   const lang = await getServerLang();
   const product = resolveProduct((await searchParams).p);
   const meta = PRODUCTS[product];
-  const isEsp = product === "esp";
-  // Общая «обёртка» страницы (хлебные крошки, бейдж, заголовок, сайдбар, TOC)
-  // одинакова у обоих продуктов — берём поля из выбранного гайда структурно.
+  // Оба ESP-продукта используют EspCopy-шаблон (список секций + блоки),
+  // но чтения текста разные — выбираем по slug'у продукта.
+  const espGuide =
+    product === "stalcraft-esp" ? STALCRAFT_ESP_GUIDE[lang] :
+    product === "esp"           ? ESP_GUIDE[lang] :
+    null;
+  const isEsp = espGuide !== null;
   const tc = TRADING_GUIDE[lang];
-  const ec = ESP_GUIDE[lang];
-  const chrome = isEsp ? ec : tc;
-  const sections = isEsp
-    ? ec.sections.map((s) => ({ id: s.id, n: s.n, title: s.toc }))
+  const chrome = espGuide ?? tc;
+  const sections = espGuide
+    ? espGuide.sections.map((s) => ({ id: s.id, n: s.n, title: s.toc }))
     : SECTION_META.map((m) => ({ ...m, title: tc.toc[m.id] }));
 
   return (
@@ -700,7 +874,7 @@ export default async function InstructionsPage({
             <Callout label={chrome.important}>{chrome.leadCallout}</Callout>
 
             {isEsp && (
-              <EspBody sections={ec.sections} important={chrome.important} discordUrl={DISCORD_URL} />
+              <EspBody sections={espGuide.sections} important={chrome.important} discordUrl={DISCORD_URL} />
             )}
 
             {!isEsp && (<>
