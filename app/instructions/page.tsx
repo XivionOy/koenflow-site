@@ -488,7 +488,7 @@ const STALCRAFT_ESP_GUIDE: Record<Lang, EspCopy> = {
     sidebarDesc: "Активируйте ключ и запускайте.",
     sidebarDownload: "Скачать",
     tocLabel: "Содержание",
-    lead: "STALCRAFT ESP подсвечивает противников, мутантов и лут прямо в игре. Установка занимает пару минут — пройдите шаги по порядку.",
+    lead: "STALCRAFT ESP подсвечивает противников, мутантов и лут прямо в игре. Установка занимает пару минут, пройдите шаги по порядку.",
     important: "Важно.",
     leadCallout: "Прочитайте инструкцию полностью перед выполнением. Большинство проблем возникает из-за пропущенных шагов.",
     sections: [
@@ -503,7 +503,7 @@ const STALCRAFT_ESP_GUIDE: Record<Lang, EspCopy> = {
         id: "tamper", n: "02", toc: "Защита от подделки", head: "Отключите защиту от подделки",
         blocks: [
           { t: "p", text: "Там же, в разделе «Защита от вирусов и угроз», отключите «Защиту от подделки» (Tamper Protection). Иначе Windows включит защиту обратно автоматически." },
-          { t: "path", steps: ["Безопасность Windows", "Защита от вирусов и угроз", "Управление настройками", "Защита от подделки — Выкл"] },
+          { t: "path", steps: ["Безопасность Windows", "Защита от вирусов и угроз", "Управление настройками", "Защита от подделки: Выкл"] },
         ],
       },
       {
@@ -528,27 +528,20 @@ const STALCRAFT_ESP_GUIDE: Record<Lang, EspCopy> = {
       {
         id: "launch", n: "06", toc: "Запуск", head: "Запуск ESP и игры",
         blocks: [
-          { t: "p", text: "В библиотеке лаунчера нажмите Launch на карточке STALCRAFT ESP — запустится окно Nightvex (панель настроек цветов и категорий). Затем запустите STALCRAFT обычным способом. ESP автоматически инжектится в игру, статус в шапке панели поменяется с «Ждёт игру» на «Инжектирован»." },
-          { t: "callout", text: "STALCRAFT можно запускать в любой момент до или после запуска ESP — инжектор ловит игру в течение секунды после её появления." },
+          { t: "p", text: "В библиотеке лаунчера нажмите Launch на карточке STALCRAFT ESP: запустится окно Nightvex (панель настроек цветов и категорий). Затем запустите STALCRAFT обычным способом. ESP автоматически инжектится в игру, статус в шапке панели поменяется с «Ждёт игру» на «Инжектирован»." },
+          { t: "callout", text: "STALCRAFT можно запускать в любой момент до или после запуска ESP, инжектор ловит игру в течение секунды после её появления." },
         ],
       },
       {
         id: "hotkeys", n: "07", toc: "Игровые хоткеи", head: "Хоткеи в игре",
         blocks: [
           { t: "p", text: "Хоткеи работают только когда окно STALCRAFT в фокусе (чтобы не мешать при работе с другими окнами):" },
-          { t: "steps", items: ["F12 — включить или выключить покраску целиком (мастер-свитч).", "Numpad 1–8 — включить или выключить отдельную категорию: тела противников, снаряжение, мутанты, маркеры, предметы, лут, аномалии.", "F9 — циклическое переключение режима отрисовки (Standard → Additive → HDR → Wireframe)."] },
+          { t: "steps", items: ["F12: включить или выключить покраску целиком (мастер-свитч).", "Numpad 1..8: включить или выключить отдельную категорию (тела противников, снаряжение, мутанты, маркеры, предметы, лут, аномалии).", "F9: циклическое переключение режима отрисовки (Standard, Additive, HDR, Wireframe)."] },
           { t: "callout", text: "Короткий тап F12, не удерживать: auto-repeat клавиатуры за секунду 15 раз переключит chams туда-сюда и мастер вернётся в исходное состояние." },
         ],
       },
       {
-        id: "settings", n: "08", toc: "Настройка цветов", head: "Настройка категорий и цветов",
-        blocks: [
-          { t: "p", text: "В окне Nightvex во вкладке «Категории» вы можете:" },
-          { t: "steps", items: ["Включить или выключить любую категорию (Тела противников, Снаряжение, Мутанты, Маркеры, Предметы, Лут, Аномалии).", "Настроить цвет и интенсивность (BASE — плоский цвет, GLOW — свечение поверх) для каждой категории.", "Во вкладке «Режимы» выбрать способ отрисовки: Standard (стабильно), Additive (ярко), Ultra HDR (сочно), Wireframe (силуэт)."] },
-        ],
-      },
-      {
-        id: "support", n: "09", toc: "Поддержка", head: "Поддержка",
+        id: "support", n: "08", toc: "Поддержка", head: "Поддержка",
         blocks: [
           { t: "p", text: "Если возникли проблемы, обращайтесь в поддержку через Discord." },
           { t: "steps", items: ["Перейдите на наш Discord-сервер.", "Найдите раздел поддержки.", "Создайте тикет или напишите сообщение.", "Опишите проблему как можно подробнее."] },
@@ -569,7 +562,7 @@ const STALCRAFT_ESP_GUIDE: Record<Lang, EspCopy> = {
     sidebarDesc: "Activate the key and launch.",
     sidebarDownload: "Download",
     tocLabel: "Contents",
-    lead: "STALCRAFT ESP highlights enemies, mutants and loot right in the game. Installation takes a couple of minutes — follow the steps in order.",
+    lead: "STALCRAFT ESP highlights enemies, mutants and loot right in the game. Installation takes a couple of minutes, follow the steps in order.",
     important: "Important.",
     leadCallout: "Read the whole guide before you start. Most issues come from skipped steps.",
     sections: [
@@ -584,7 +577,7 @@ const STALCRAFT_ESP_GUIDE: Record<Lang, EspCopy> = {
         id: "tamper", n: "02", toc: "Tamper protection", head: "Disable tamper protection",
         blocks: [
           { t: "p", text: "In the same “Virus & threat protection” section, turn off Tamper Protection. Otherwise Windows will re-enable the defenses automatically." },
-          { t: "path", steps: ["Windows Security", "Virus & threat protection", "Manage settings", "Tamper Protection — Off"] },
+          { t: "path", steps: ["Windows Security", "Virus & threat protection", "Manage settings", "Tamper Protection: Off"] },
         ],
       },
       {
@@ -609,27 +602,20 @@ const STALCRAFT_ESP_GUIDE: Record<Lang, EspCopy> = {
       {
         id: "launch", n: "06", toc: "Launch", head: "Launch ESP and the game",
         blocks: [
-          { t: "p", text: "In the launcher’s library click Launch on the STALCRAFT ESP card — the Nightvex window opens (the colour and category settings panel). Then start STALCRAFT normally. ESP injects into the game automatically; the status pill in the panel flips from “Waiting for game” to “Injected”." },
-          { t: "callout", text: "STALCRAFT can be launched any time before or after ESP — the injector catches the game within a second of it appearing." },
+          { t: "p", text: "In the launcher’s library click Launch on the STALCRAFT ESP card: the Nightvex window opens (the colour and category settings panel). Then start STALCRAFT normally. ESP injects into the game automatically; the status pill in the panel flips from “Waiting for game” to “Injected”." },
+          { t: "callout", text: "STALCRAFT can be launched any time before or after ESP, the injector catches the game within a second of it appearing." },
         ],
       },
       {
         id: "hotkeys", n: "07", toc: "In-game hotkeys", head: "In-game hotkeys",
         blocks: [
           { t: "p", text: "Hotkeys only fire while the STALCRAFT window is focused (so they don’t interfere with other apps):" },
-          { t: "steps", items: ["F12 — toggle the whole overlay on or off (master switch).", "Numpad 1–8 — toggle individual categories: enemy bodies, gear, mutants, markers, items, loot, anomalies.", "F9 — cycle through render modes (Standard → Additive → HDR → Wireframe)."] },
+          { t: "steps", items: ["F12: toggle the whole overlay on or off (master switch).", "Numpad 1..8: toggle individual categories (enemy bodies, gear, mutants, markers, items, loot, anomalies).", "F9: cycle through render modes (Standard, Additive, HDR, Wireframe)."] },
           { t: "callout", text: "Quick tap on F12, don’t hold it: keyboard auto-repeat would flip chams 15 times a second and land back where it started." },
         ],
       },
       {
-        id: "settings", n: "08", toc: "Colours and settings", head: "Categories and colours",
-        blocks: [
-          { t: "p", text: "In the Nightvex window, the “Categories” tab lets you:" },
-          { t: "steps", items: ["Toggle any category on or off (Enemy bodies, Gear, Mutants, Markers, Items, Loot, Anomalies).", "Set the colour and intensity (BASE — flat colour, GLOW — emissive on top) for each category.", "In the “Modes” tab pick a rendering mode: Standard (stable), Additive (bright), Ultra HDR (rich), Wireframe (outline only)."] },
-        ],
-      },
-      {
-        id: "support", n: "09", toc: "Support", head: "Support",
+        id: "support", n: "08", toc: "Support", head: "Support",
         blocks: [
           { t: "p", text: "If you run into problems, contact support via Discord." },
           { t: "steps", items: ["Go to our Discord server.", "Find the support section.", "Create a ticket or write a message.", "Describe your problem in as much detail as possible."] },
