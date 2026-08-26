@@ -33,7 +33,7 @@ export const PRODUCTS: Record<Product, ProductMeta> = {
   },
   "stalcraft-esp": {
     id: "stalcraft-esp",
-    label: "STALCRAFT: X — ESP",
+    label: "STALCRAFT: X ESP",
     short: "STALCRAFT ESP",
     // Единый KoenFlow Launcher раздаёт STALCRAFT ESP наравне с ABI-продуктами.
     download: { url: "/downloads/KoenFlowLauncher-latest.exe", version: "V5.1.5", sizeMb: 24 },
