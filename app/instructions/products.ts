@@ -54,7 +54,7 @@ export const PRODUCTS: Record<Product, ProductMeta> = {
     // /radar/watch).
     access: {
       primaryUrl: "https://koenflow.com/radar/login",
-      secondaryUrl: "https://koenflow.com/radar",
+      secondaryUrl: "https://koenflow.com/radar/watch",
       badges: ["PC", "Mobile", "Web"],
     },
   },

@@ -637,26 +637,27 @@ const STALCRAFT_ESP_GUIDE: Record<Lang, EspCopy> = {
   },
 };
 
-// Radar — web-продукт: нет лаунчера и никаких «настроек по умолчанию».
-// Инструкция короткая: снять три защиты Windows, перезагрузиться и открыть
-// один из двух URL (ПК → /radar/login, mobile → /radar → /radar/watch).
-// Используем тот же EspCopy-каркас, что и у ESP, но с блоком { t: "link" }
-// для точек входа.
+// Radar. Веб-продукт с браузерным доступом: лаунчера нет, «настроек по
+// умолчанию» тоже. Инструкция короткая: снять четыре защиты Windows
+// (real-time / tamper / core isolation / Microsoft vulnerable driver
+// blocklist), перезагрузиться и открыть один из двух URL (ПК:
+// /radar/login, mobile: /radar/watch). Используем тот же EspCopy-каркас,
+// что и у ESP, но с блоком { t: "link" } для точек входа.
 const RADAR_GUIDE: Record<Lang, EspCopy> = {
   ru: {
     breadcrumbHome: "Главная",
     breadcrumbCurrent: "Инструкция",
     badge: "Инструкция",
     title: "Подготовка и запуск радара",
-    metaUpdated: "Обновлено 08.09.2026",
-    metaRead: "2 мин чтения",
+    metaUpdated: "Обновлено 09.09.2026",
+    metaRead: "3 мин чтения",
     sidebarLabel: "Доступ",
     sidebarTitle: "Открыть Radar",
     sidebarDesc: "Веб-версия, без установки.",
     sidebarDownload: "Войти с ПК",
     sidebarSecondary: "Открыть на телефоне",
     tocLabel: "Содержание",
-    lead: "Radar работает прямо в браузере — ставить ничего не нужно. Единственное, что требуется от Windows: снять три защиты, которые иначе блокируют работу софта. Пройдите шаги по порядку.",
+    lead: "Radar работает прямо в браузере, ставить ничего не нужно. Единственное, что требуется от Windows: снять четыре защиты, которые иначе блокируют работу софта. Пройдите шаги по порядку.",
     important: "Важно.",
     leadCallout: "Прочитайте инструкцию полностью перед выполнением. Большинство проблем возникает из-за пропущенных шагов.",
     sections: [
@@ -677,31 +678,34 @@ const RADAR_GUIDE: Record<Lang, EspCopy> = {
       {
         id: "core", n: "03", toc: "Изоляция ядра", head: "Отключите изоляцию ядра",
         blocks: [
-          { t: "p", text: "Отключите изоляцию ядра и все пункты внутри неё — каждый переключатель должен быть в положении «Выкл»." },
+          { t: "p", text: "Отключите изоляцию ядра и все пункты внутри неё, каждый переключатель должен быть в положении «Выкл»." },
           { t: "path", steps: ["Безопасность Windows", "Безопасность устройства", "Изоляция ядра", "Сведения об изоляции ядра", "Отключить все переключатели"] },
-          { t: "callout", text: "После отключения обязательно перезагрузите компьютер — иначе изменения не применятся и радар не запустится." },
         ],
       },
       {
-        id: "pc", n: "04", toc: "Запуск на ПК", head: "Запуск на ПК",
+        id: "vdb", n: "04", toc: "Список уязвимых драйверов", head: "Отключите список блокируемых уязвимых драйверов",
+        blocks: [
+          { t: "p", text: "В том же разделе «Изоляция ядра» есть отдельный тумблер «Список блокируемых уязвимых драйверов Microsoft» (Microsoft Vulnerable Driver Blocklist). Его тоже нужно отключить, иначе Windows заблокирует часть системных вызовов радара." },
+          { t: "path", steps: ["Безопасность Windows", "Безопасность устройства", "Изоляция ядра", "Список блокируемых уязвимых драйверов Microsoft: Выкл"] },
+          { t: "callout", text: "После отключения всех тумблеров обязательно перезагрузите компьютер, иначе изменения не применятся и радар не запустится." },
+        ],
+      },
+      {
+        id: "pc", n: "05", toc: "Запуск на ПК", head: "Запуск на ПК",
         blocks: [
           { t: "p", text: "Откройте страницу входа в любом современном браузере (Chrome, Edge, Firefox) и авторизуйтесь в аккаунте:" },
-          { t: "link", url: "https://koenflow.com/radar/login", button: "koenflow.com/radar/login", note: "Никакой установки не требуется — радар работает прямо во вкладке браузера." },
+          { t: "link", url: "https://koenflow.com/radar/login", button: "koenflow.com/radar/login", note: "Никакой установки не требуется, радар работает прямо во вкладке браузера." },
         ],
       },
       {
-        id: "mobile", n: "05", toc: "Запуск на мобильных", head: "Запуск на мобильных устройствах",
+        id: "mobile", n: "06", toc: "Запуск на мобильных", head: "Запуск на мобильных устройствах",
         blocks: [
-          { t: "p", text: "На телефоне радар открывается тоже через браузер, отдельное приложение скачивать не нужно. Порядок такой:" },
-          { t: "steps", items: [
-            "Откройте koenflow.com/radar — это точка входа для мобильной версии.",
-            "Авторизуйтесь и перейдите к экрану радара по адресу koenflow.com/radar/watch.",
-          ] },
-          { t: "link", url: "https://koenflow.com/radar", button: "koenflow.com/radar", note: "Совет: добавьте /radar/watch на главный экран телефона — открывается как обычное приложение, в полноэкранном режиме." },
+          { t: "p", text: "На телефоне радар открывается через браузер, отдельное приложение скачивать не нужно. Откройте прямую ссылку и авторизуйтесь:" },
+          { t: "link", url: "https://koenflow.com/radar/watch", button: "koenflow.com/radar/watch", note: "Совет: добавьте страницу на главный экран телефона, она открывается как обычное приложение в полноэкранном режиме." },
         ],
       },
       {
-        id: "support", n: "06", toc: "Поддержка", head: "Поддержка",
+        id: "support", n: "07", toc: "Поддержка", head: "Поддержка",
         blocks: [
           { t: "p", text: "Если возникли проблемы, обращайтесь в поддержку через Discord." },
           { t: "steps", items: ["Перейдите на наш Discord-сервер.", "Найдите раздел поддержки.", "Создайте тикет или напишите сообщение.", "Опишите проблему как можно подробнее."] },
@@ -715,15 +719,15 @@ const RADAR_GUIDE: Record<Lang, EspCopy> = {
     breadcrumbCurrent: "Guide",
     badge: "Guide",
     title: "Setup and launch the radar",
-    metaUpdated: "Updated 08.09.2026",
-    metaRead: "2 min read",
+    metaUpdated: "Updated 09.09.2026",
+    metaRead: "3 min read",
     sidebarLabel: "Access",
     sidebarTitle: "Open Radar",
     sidebarDesc: "Web app, no install.",
     sidebarDownload: "Sign in on PC",
     sidebarSecondary: "Open on mobile",
     tocLabel: "Contents",
-    lead: "Radar runs right in the browser — nothing to install. All Windows needs is three protections turned off, otherwise the software is blocked. Follow the steps in order.",
+    lead: "Radar runs right in the browser, nothing to install. All Windows needs is four protections turned off, otherwise the software is blocked. Follow the steps in order.",
     important: "Important.",
     leadCallout: "Read the whole guide before you start. Most issues come from skipped steps.",
     sections: [
@@ -744,31 +748,34 @@ const RADAR_GUIDE: Record<Lang, EspCopy> = {
       {
         id: "core", n: "03", toc: "Core isolation", head: "Disable core isolation",
         blocks: [
-          { t: "p", text: "Turn off Core Isolation and every item inside it — each toggle must be Off." },
+          { t: "p", text: "Turn off Core Isolation and every item inside it, each toggle must be Off." },
           { t: "path", steps: ["Windows Security", "Device security", "Core isolation", "Core isolation details", "Turn every toggle Off"] },
-          { t: "callout", text: "Restart the PC after turning them off — otherwise the changes don’t apply and the radar won’t launch." },
         ],
       },
       {
-        id: "pc", n: "04", toc: "Launch on PC", head: "Launch on PC",
+        id: "vdb", n: "04", toc: "Vulnerable driver blocklist", head: "Disable the Microsoft vulnerable driver blocklist",
+        blocks: [
+          { t: "p", text: "Inside the same Core Isolation section there is a separate toggle called “Microsoft Vulnerable Driver Blocklist”. Turn that one off too, otherwise Windows blocks part of what the radar needs at the system level." },
+          { t: "path", steps: ["Windows Security", "Device security", "Core isolation", "Microsoft Vulnerable Driver Blocklist: Off"] },
+          { t: "callout", text: "Restart the PC once every toggle is off, otherwise the changes don’t apply and the radar won’t launch." },
+        ],
+      },
+      {
+        id: "pc", n: "05", toc: "Launch on PC", head: "Launch on PC",
         blocks: [
           { t: "p", text: "Open the sign-in page in any modern browser (Chrome, Edge, Firefox) and log into your account:" },
-          { t: "link", url: "https://koenflow.com/radar/login", button: "koenflow.com/radar/login", note: "No installation required — the radar runs right inside the browser tab." },
+          { t: "link", url: "https://koenflow.com/radar/login", button: "koenflow.com/radar/login", note: "No installation required, the radar runs right inside the browser tab." },
         ],
       },
       {
-        id: "mobile", n: "05", toc: "Launch on mobile", head: "Launch on mobile devices",
+        id: "mobile", n: "06", toc: "Launch on mobile", head: "Launch on mobile devices",
         blocks: [
-          { t: "p", text: "On mobile the radar also runs in the browser — no separate app to download. The flow is:" },
-          { t: "steps", items: [
-            "Open koenflow.com/radar — that’s the entry point for the mobile version.",
-            "Sign in and go to the radar view at koenflow.com/radar/watch.",
-          ] },
-          { t: "link", url: "https://koenflow.com/radar", button: "koenflow.com/radar", note: "Tip: add /radar/watch to your home screen — it opens like a native app, fullscreen." },
+          { t: "p", text: "On mobile the radar also runs in the browser, no separate app to download. Open the direct link and sign in:" },
+          { t: "link", url: "https://koenflow.com/radar/watch", button: "koenflow.com/radar/watch", note: "Tip: add the page to your phone home screen, it opens like a native app in fullscreen." },
         ],
       },
       {
-        id: "support", n: "06", toc: "Support", head: "Support",
+        id: "support", n: "07", toc: "Support", head: "Support",
         blocks: [
           { t: "p", text: "If you run into problems, contact support via Discord." },
           { t: "steps", items: ["Go to our Discord server.", "Find the support section.", "Create a ticket or write a message.", "Describe your problem in as much detail as possible."] },
