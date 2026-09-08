@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import SmokyBackground from "../components/SmokyBackground";
@@ -47,6 +48,9 @@ type GuideCopy = {
     sidebarTitle: string;
     sidebarDesc: string;
     sidebarDownload: string;
+    // Не используется трейд-инструкцией, объявлено для общей формы union
+    // с EspCopy (см. рендер сайдбара).
+    sidebarSecondary?: string;
     tocLabel: string;
     lead: string;
     important: string;
@@ -278,6 +282,10 @@ type Block =
   | { t: "callout"; text: string }
   | { t: "code"; text: string }
   | { t: "steps"; items: string[] }
+  // Внешняя ссылка-CTA: primary-кнопка в стиле «Open Discord», но с
+  // произвольным URL. Используется в radar-инструкции для /radar/login
+  // и /radar/watch.
+  | { t: "link"; url: string; button: string; note?: string }
   | { t: "discord"; button: string; note: string };
 
 type EspSection = { id: string; n: string; toc: string; head: string; blocks: Block[] };
@@ -293,6 +301,9 @@ type EspCopy = {
   sidebarTitle: string;
   sidebarDesc: string;
   sidebarDownload: string;
+  // Опциональная вторая кнопка сайдбара (для radar: «Open on mobile»).
+  // Отображается только если продукт в meta объявил access.secondaryUrl.
+  sidebarSecondary?: string;
   tocLabel: string;
   lead: string;
   important: string;
@@ -626,6 +637,148 @@ const STALCRAFT_ESP_GUIDE: Record<Lang, EspCopy> = {
   },
 };
 
+// Radar — web-продукт: нет лаунчера и никаких «настроек по умолчанию».
+// Инструкция короткая: снять три защиты Windows, перезагрузиться и открыть
+// один из двух URL (ПК → /radar/login, mobile → /radar → /radar/watch).
+// Используем тот же EspCopy-каркас, что и у ESP, но с блоком { t: "link" }
+// для точек входа.
+const RADAR_GUIDE: Record<Lang, EspCopy> = {
+  ru: {
+    breadcrumbHome: "Главная",
+    breadcrumbCurrent: "Инструкция",
+    badge: "Инструкция",
+    title: "Подготовка и запуск радара",
+    metaUpdated: "Обновлено 08.09.2026",
+    metaRead: "2 мин чтения",
+    sidebarLabel: "Доступ",
+    sidebarTitle: "Открыть Radar",
+    sidebarDesc: "Веб-версия, без установки.",
+    sidebarDownload: "Войти с ПК",
+    sidebarSecondary: "Открыть на телефоне",
+    tocLabel: "Содержание",
+    lead: "Radar работает прямо в браузере — ставить ничего не нужно. Единственное, что требуется от Windows: снять три защиты, которые иначе блокируют работу софта. Пройдите шаги по порядку.",
+    important: "Важно.",
+    leadCallout: "Прочитайте инструкцию полностью перед выполнением. Большинство проблем возникает из-за пропущенных шагов.",
+    sections: [
+      {
+        id: "defender", n: "01", toc: "Защита в реальном времени", head: "Отключите защиту в реальном времени",
+        blocks: [
+          { t: "p", text: "Перед запуском отключите защиту Windows в реальном времени. Делайте это вручную через системные настройки:" },
+          { t: "path", steps: ["Параметры", "Обновление и безопасность", "Безопасность Windows", "Защита от вирусов и угроз", "Управление настройками", "Выключить защиту в реальном времени"] },
+        ],
+      },
+      {
+        id: "tamper", n: "02", toc: "Защита от подделки", head: "Отключите защиту от подделки",
+        blocks: [
+          { t: "p", text: "Там же, в разделе «Защита от вирусов и угроз», отключите «Защиту от подделки» (Tamper Protection). Иначе Windows включит защиту обратно автоматически." },
+          { t: "path", steps: ["Безопасность Windows", "Защита от вирусов и угроз", "Управление настройками", "Защита от подделки: Выкл"] },
+        ],
+      },
+      {
+        id: "core", n: "03", toc: "Изоляция ядра", head: "Отключите изоляцию ядра",
+        blocks: [
+          { t: "p", text: "Отключите изоляцию ядра и все пункты внутри неё — каждый переключатель должен быть в положении «Выкл»." },
+          { t: "path", steps: ["Безопасность Windows", "Безопасность устройства", "Изоляция ядра", "Сведения об изоляции ядра", "Отключить все переключатели"] },
+          { t: "callout", text: "После отключения обязательно перезагрузите компьютер — иначе изменения не применятся и радар не запустится." },
+        ],
+      },
+      {
+        id: "pc", n: "04", toc: "Запуск на ПК", head: "Запуск на ПК",
+        blocks: [
+          { t: "p", text: "Откройте страницу входа в любом современном браузере (Chrome, Edge, Firefox) и авторизуйтесь в аккаунте:" },
+          { t: "link", url: "https://koenflow.com/radar/login", button: "koenflow.com/radar/login", note: "Никакой установки не требуется — радар работает прямо во вкладке браузера." },
+        ],
+      },
+      {
+        id: "mobile", n: "05", toc: "Запуск на мобильных", head: "Запуск на мобильных устройствах",
+        blocks: [
+          { t: "p", text: "На телефоне радар открывается тоже через браузер, отдельное приложение скачивать не нужно. Порядок такой:" },
+          { t: "steps", items: [
+            "Откройте koenflow.com/radar — это точка входа для мобильной версии.",
+            "Авторизуйтесь и перейдите к экрану радара по адресу koenflow.com/radar/watch.",
+          ] },
+          { t: "link", url: "https://koenflow.com/radar", button: "koenflow.com/radar", note: "Совет: добавьте /radar/watch на главный экран телефона — открывается как обычное приложение, в полноэкранном режиме." },
+        ],
+      },
+      {
+        id: "support", n: "06", toc: "Поддержка", head: "Поддержка",
+        blocks: [
+          { t: "p", text: "Если возникли проблемы, обращайтесь в поддержку через Discord." },
+          { t: "steps", items: ["Перейдите на наш Discord-сервер.", "Найдите раздел поддержки.", "Создайте тикет или напишите сообщение.", "Опишите проблему как можно подробнее."] },
+          { t: "discord", button: "Перейти в Discord", note: "Наша команда постарается помочь в кратчайшие сроки." },
+        ],
+      },
+    ],
+  },
+  en: {
+    breadcrumbHome: "Home",
+    breadcrumbCurrent: "Guide",
+    badge: "Guide",
+    title: "Setup and launch the radar",
+    metaUpdated: "Updated 08.09.2026",
+    metaRead: "2 min read",
+    sidebarLabel: "Access",
+    sidebarTitle: "Open Radar",
+    sidebarDesc: "Web app, no install.",
+    sidebarDownload: "Sign in on PC",
+    sidebarSecondary: "Open on mobile",
+    tocLabel: "Contents",
+    lead: "Radar runs right in the browser — nothing to install. All Windows needs is three protections turned off, otherwise the software is blocked. Follow the steps in order.",
+    important: "Important.",
+    leadCallout: "Read the whole guide before you start. Most issues come from skipped steps.",
+    sections: [
+      {
+        id: "defender", n: "01", toc: "Real-time protection", head: "Disable real-time protection",
+        blocks: [
+          { t: "p", text: "Before launching, turn off Windows real-time protection. Do it manually through the system settings:" },
+          { t: "path", steps: ["Settings", "Update & Security", "Windows Security", "Virus & threat protection", "Manage settings", "Turn off real-time protection"] },
+        ],
+      },
+      {
+        id: "tamper", n: "02", toc: "Tamper protection", head: "Disable tamper protection",
+        blocks: [
+          { t: "p", text: "In the same “Virus & threat protection” section, turn off Tamper Protection. Otherwise Windows will re-enable the defenses automatically." },
+          { t: "path", steps: ["Windows Security", "Virus & threat protection", "Manage settings", "Tamper Protection: Off"] },
+        ],
+      },
+      {
+        id: "core", n: "03", toc: "Core isolation", head: "Disable core isolation",
+        blocks: [
+          { t: "p", text: "Turn off Core Isolation and every item inside it — each toggle must be Off." },
+          { t: "path", steps: ["Windows Security", "Device security", "Core isolation", "Core isolation details", "Turn every toggle Off"] },
+          { t: "callout", text: "Restart the PC after turning them off — otherwise the changes don’t apply and the radar won’t launch." },
+        ],
+      },
+      {
+        id: "pc", n: "04", toc: "Launch on PC", head: "Launch on PC",
+        blocks: [
+          { t: "p", text: "Open the sign-in page in any modern browser (Chrome, Edge, Firefox) and log into your account:" },
+          { t: "link", url: "https://koenflow.com/radar/login", button: "koenflow.com/radar/login", note: "No installation required — the radar runs right inside the browser tab." },
+        ],
+      },
+      {
+        id: "mobile", n: "05", toc: "Launch on mobile", head: "Launch on mobile devices",
+        blocks: [
+          { t: "p", text: "On mobile the radar also runs in the browser — no separate app to download. The flow is:" },
+          { t: "steps", items: [
+            "Open koenflow.com/radar — that’s the entry point for the mobile version.",
+            "Sign in and go to the radar view at koenflow.com/radar/watch.",
+          ] },
+          { t: "link", url: "https://koenflow.com/radar", button: "koenflow.com/radar", note: "Tip: add /radar/watch to your home screen — it opens like a native app, fullscreen." },
+        ],
+      },
+      {
+        id: "support", n: "06", toc: "Support", head: "Support",
+        blocks: [
+          { t: "p", text: "If you run into problems, contact support via Discord." },
+          { t: "steps", items: ["Go to our Discord server.", "Find the support section.", "Create a ticket or write a message.", "Describe your problem in as much detail as possible."] },
+          { t: "discord", button: "Open Discord", note: "Our team will try to help as soon as possible." },
+        ],
+      },
+    ],
+  },
+};
+
 function SectionTitle({ id, n, title }: { id: string; n: string; title: string }) {
   return (
     <h2 id={id} className="scroll-mt-5xl font-inter text-h3 text-ink">
@@ -691,6 +844,26 @@ function EspBody({
                     <Step key={j}>{step}</Step>
                   ))}
                 </ul>
+              );
+            if (b.t === "link")
+              return (
+                <div key={i}>
+                  <a
+                    href={b.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-md inline-flex h-lg items-center justify-center gap-xs rounded-lg border border-white/20 bg-white/5 px-md font-inter text-button uppercase text-white transition-colors hover:bg-white/10"
+                  >
+                    {b.button}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true">
+                      <path d="M7 7h10v10" />
+                      <path d="M7 17 17 7" />
+                    </svg>
+                  </a>
+                  {b.note && (
+                    <p className="mt-sm font-inter text-body-sm text-muted">{b.note}</p>
+                  )}
+                </div>
               );
             // discord
             return (
@@ -766,17 +939,19 @@ export default async function InstructionsPage({
   const lang = await getServerLang();
   const product = resolveProduct((await searchParams).p);
   const meta = PRODUCTS[product];
-  // Оба ESP-продукта используют EspCopy-шаблон (список секций + блоки),
-  // но чтения текста разные — выбираем по slug'у продукта.
-  const espGuide =
+  // ESP-продукты и Radar используют один и тот же EspCopy-шаблон (список
+  // секций + блоки), но чтения текста разные — выбираем по slug'у продукта.
+  // Trading остаётся на фиксированной схеме (ниже, ветка !isBlockGuide).
+  const blockGuide =
     product === "stalcraft-esp" ? STALCRAFT_ESP_GUIDE[lang] :
     product === "esp"           ? ESP_GUIDE[lang] :
+    product === "radar"         ? RADAR_GUIDE[lang] :
     null;
-  const isEsp = espGuide !== null;
+  const isBlockGuide = blockGuide !== null;
   const tc = TRADING_GUIDE[lang];
-  const chrome = espGuide ?? tc;
-  const sections = espGuide
-    ? espGuide.sections.map((s) => ({ id: s.id, n: s.n, title: s.toc }))
+  const chrome = blockGuide ?? tc;
+  const sections = blockGuide
+    ? blockGuide.sections.map((s) => ({ id: s.id, n: s.n, title: s.toc }))
     : SECTION_META.map((m) => ({ ...m, title: tc.toc[m.id] }));
 
   return (
@@ -828,21 +1003,54 @@ export default async function InstructionsPage({
               <p className="mt-2xs font-inter text-body-sm text-muted">
                 {chrome.sidebarDesc}
               </p>
-              <div className="mt-sm flex items-center gap-2xs font-inter text-label uppercase text-muted">
-                <span>{meta.download.version}</span>
-                <span className="text-white/25">·</span>
-                <span>{meta.download.sizeMb} MB</span>
-                <span className="text-white/25">·</span>
-                <svg viewBox="0 0 448 512" fill="currentColor" className="h-3 w-3" aria-hidden="true">
-                  <path d="M0 93.7l183.6-25.3v177.4H0V93.7zm0 324.6l183.6 25.3V268.4H0v149.9zm203.8 28L448 480V268.4H203.8v177.9zm0-380.6v180.1H448V32L203.8 65.7z" />
-                </svg>
-              </div>
-              <a
-                href={meta.download.url}
-                className="mt-sm inline-flex h-lg w-full items-center justify-center rounded-lg bg-white px-sm font-inter text-button uppercase text-black transition-colors hover:bg-white/90"
-              >
-                {chrome.sidebarDownload}
-              </a>
+              {meta.access ? (
+                <>
+                  <div className="mt-sm flex items-center gap-2xs font-inter text-label uppercase text-muted">
+                    {meta.access.badges.map((badge, i) => (
+                      <Fragment key={badge}>
+                        {i > 0 && <span className="text-white/25">·</span>}
+                        <span>{badge}</span>
+                      </Fragment>
+                    ))}
+                  </div>
+                  <a
+                    href={meta.access.primaryUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-sm inline-flex h-lg w-full items-center justify-center rounded-lg bg-white px-sm font-inter text-button uppercase text-black transition-colors hover:bg-white/90"
+                  >
+                    {chrome.sidebarDownload}
+                  </a>
+                  {chrome.sidebarSecondary && (
+                    <a
+                      href={meta.access.secondaryUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-2xs inline-flex h-lg w-full items-center justify-center rounded-lg border border-white/20 bg-white/5 px-sm font-inter text-button uppercase text-white transition-colors hover:bg-white/10"
+                    >
+                      {chrome.sidebarSecondary}
+                    </a>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className="mt-sm flex items-center gap-2xs font-inter text-label uppercase text-muted">
+                    <span>{meta.download.version}</span>
+                    <span className="text-white/25">·</span>
+                    <span>{meta.download.sizeMb} MB</span>
+                    <span className="text-white/25">·</span>
+                    <svg viewBox="0 0 448 512" fill="currentColor" className="h-3 w-3" aria-hidden="true">
+                      <path d="M0 93.7l183.6-25.3v177.4H0V93.7zm0 324.6l183.6 25.3V268.4H0v149.9zm203.8 28L448 480V268.4H203.8v177.9zm0-380.6v180.1H448V32L203.8 65.7z" />
+                    </svg>
+                  </div>
+                  <a
+                    href={meta.download.url}
+                    className="mt-sm inline-flex h-lg w-full items-center justify-center rounded-lg bg-white px-sm font-inter text-button uppercase text-black transition-colors hover:bg-white/90"
+                  >
+                    {chrome.sidebarDownload}
+                  </a>
+                </>
+              )}
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-white/5 p-sm">
@@ -859,11 +1067,11 @@ export default async function InstructionsPage({
             <p className="font-inter text-lead text-ink/80">{chrome.lead}</p>
             <Callout label={chrome.important}>{chrome.leadCallout}</Callout>
 
-            {isEsp && (
-              <EspBody sections={espGuide.sections} important={chrome.important} discordUrl={DISCORD_URL} />
+            {isBlockGuide && (
+              <EspBody sections={blockGuide.sections} important={chrome.important} discordUrl={DISCORD_URL} />
             )}
 
-            {!isEsp && (<>
+            {!isBlockGuide && (<>
             {/* 01 */}
             <section className="mt-3xl">
               <SectionTitle id="defender" n="01" title={tc.head["defender"]} />
