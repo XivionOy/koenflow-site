@@ -80,13 +80,6 @@ export default function Navbar({ lang }: { lang: Lang }) {
                 </div>
               )}
             </div>
-
-            <a
-              href="/partners"
-              className="font-inter text-nav uppercase text-white/80 transition-colors hover:text-white"
-            >
-              {t.partners}
-            </a>
           </div>
 
           <div className="hidden items-center gap-xs md:flex">
@@ -170,19 +163,6 @@ export default function Navbar({ lang }: { lang: Lang }) {
               ))}
             </div>
           </div>
-
-          <a
-            href="/partners"
-            onClick={() => setMenuOpen(false)}
-            style={{
-              transitionDelay: "180ms",
-              opacity: menuOpen ? 1 : 0,
-              transform: menuOpen ? "translateY(0)" : "translateY(20px)",
-            }}
-            className="font-podium text-menu uppercase text-white transition-all duration-500"
-          >
-            {t.partners}
-          </a>
 
           <div
             style={{
