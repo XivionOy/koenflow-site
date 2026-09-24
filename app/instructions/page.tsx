@@ -319,14 +319,14 @@ const ESP_GUIDE: Record<Lang, EspCopy> = {
     breadcrumbCurrent: "Инструкция",
     badge: "Инструкция",
     title: "Подготовка, запуск и настройка",
-    metaUpdated: "Обновлено 24.06.2026",
-    metaRead: "4 мин чтения",
+    metaUpdated: "Обновлено 24.09.2026",
+    metaRead: "2 мин чтения",
     sidebarLabel: "Лаунчер",
     sidebarTitle: "Скачать KoenFlow",
     sidebarDesc: "Активируйте ключ и запускайте.",
     sidebarDownload: "Скачать",
     tocLabel: "Содержание",
-    lead: "ESP требует подготовки Windows: нужно снять несколько защит, которые иначе блокируют запуск или дают синий экран. Пройдите шаги по порядку.",
+    lead: "ESP подсвечивает противников и лут прямо в игре. Установка занимает пару минут, пройдите шаги по порядку.",
     important: "Важно.",
     leadCallout: "Ознакомьтесь с инструкцией полностью перед выполнением. Большинство проблем возникает из-за пропущенных шагов.",
     sections: [
@@ -338,56 +338,32 @@ const ESP_GUIDE: Record<Lang, EspCopy> = {
         ],
       },
       {
-        id: "tamper", n: "02", toc: "Защита от подделки", head: "Отключите защиту от подделки",
-        blocks: [
-          { t: "p", text: "Там же, в разделе «Защита от вирусов и угроз», отключите «Защиту от подделки» (Tamper Protection). Иначе Windows включит защиту обратно автоматически." },
-          { t: "path", steps: ["Безопасность Windows", "Защита от вирусов и угроз", "Управление настройками", "Защита от подделки — Выкл"] },
-        ],
-      },
-      {
-        id: "core", n: "03", toc: "Изоляция ядра", head: "Отключите изоляцию ядра",
-        blocks: [
-          { t: "p", text: "Отключите «Целостность памяти» в изоляции ядра, затем перезагрузите компьютер." },
-          { t: "path", steps: ["Безопасность Windows", "Безопасность устройства", "Изоляция ядра", "Целостность памяти — Выкл"] },
-          { t: "callout", text: "После отключения обязательно перезагрузите ПК." },
-          { t: "callout", text: "Если установлен античит FACEIT, ESP может не запуститься вместе с ним." },
-        ],
-      },
-      {
-        id: "hyperv", n: "04", toc: "Hyper-V (Intel · 25H2)", head: "Intel и Windows 25H2: отключите Hyper-V",
-        blocks: [
-          { t: "p", text: "Владельцам процессоров Intel на Windows 25H2 нужно дополнительно отключить Hyper-V в компонентах Windows, иначе возможен синий экран (BSOD)." },
-          { t: "path", steps: ["Панель управления", "Программы", "Включение или отключение компонентов Windows", "Снять галочку Hyper-V", "ОК и перезагрузка"] },
-          { t: "callout", text: "Если синие экраны (BSOD) продолжаются, отключите виртуализацию и в BIOS: Intel VT-d / Virtualization Technology." },
-        ],
-      },
-      {
-        id: "after-purchase", n: "05", toc: "Получение ключа", head: "Действия после покупки",
+        id: "after-purchase", n: "02", toc: "Получение ключа", head: "Действия после покупки",
         blocks: [
           { t: "p", text: "После оплаты вы получите ключ активации и эту инструкцию. Ключ выглядит так:" },
           { t: "code", text: KEY_SAMPLE },
         ],
       },
       {
-        id: "download", n: "06", toc: "Скачивание", head: "Скачивание программы",
+        id: "download", n: "03", toc: "Скачивание", head: "Скачивание программы",
         blocks: [
           { t: "p", text: "Скачайте лаунчер кнопкой «Скачать» в блоке лаунчера и после загрузки установите или запустите приложение." },
         ],
       },
       {
-        id: "activate", n: "07", toc: "Активация ключа", head: "Активация ключа",
+        id: "activate", n: "04", toc: "Активация ключа", head: "Активация ключа",
         blocks: [
           { t: "p", text: "Вернитесь в программу и вставьте полученный ключ активации в соответствующее поле." },
         ],
       },
       {
-        id: "menu", n: "08", toc: "Открыть меню", head: "Открыть меню в игре",
+        id: "menu", n: "05", toc: "Открыть меню", head: "Открыть меню в игре",
         blocks: [
           { t: "p", text: "Меню ESP открывается и скрывается клавишей Home прямо в игре. Настройки применяются сразу, перезапуск не требуется." },
         ],
       },
       {
-        id: "support", n: "09", toc: "Поддержка", head: "Поддержка",
+        id: "support", n: "06", toc: "Поддержка", head: "Поддержка",
         blocks: [
           { t: "p", text: "Если возникли проблемы, обращайтесь в поддержку через Discord." },
           { t: "steps", items: ["Перейдите на наш Discord-сервер.", "Найдите раздел поддержки.", "Создайте тикет или напишите сообщение.", "Опишите проблему как можно подробнее."] },
@@ -401,14 +377,14 @@ const ESP_GUIDE: Record<Lang, EspCopy> = {
     breadcrumbCurrent: "Guide",
     badge: "Guide",
     title: "Setup, launch and configuration",
-    metaUpdated: "Updated 24.06.2026",
-    metaRead: "4 min read",
+    metaUpdated: "Updated 24.09.2026",
+    metaRead: "2 min read",
     sidebarLabel: "Launcher",
     sidebarTitle: "Download KoenFlow",
     sidebarDesc: "Activate the key and launch.",
     sidebarDownload: "Download",
     tocLabel: "Contents",
-    lead: "ESP needs a bit of Windows prep: several protections have to be turned off, otherwise it won’t launch or you’ll get a blue screen. Follow the steps in order.",
+    lead: "ESP highlights enemies and loot right in the game. Installation takes a couple of minutes, follow the steps in order.",
     important: "Important.",
     leadCallout: "Read the whole guide before you start. Most issues come from skipped steps.",
     sections: [
@@ -420,56 +396,32 @@ const ESP_GUIDE: Record<Lang, EspCopy> = {
         ],
       },
       {
-        id: "tamper", n: "02", toc: "Tamper protection", head: "Disable tamper protection",
-        blocks: [
-          { t: "p", text: "In the same “Virus & threat protection” section, turn off Tamper Protection. Otherwise Windows will re-enable the defenses automatically." },
-          { t: "path", steps: ["Windows Security", "Virus & threat protection", "Manage settings", "Tamper Protection — Off"] },
-        ],
-      },
-      {
-        id: "core", n: "03", toc: "Core isolation", head: "Disable core isolation",
-        blocks: [
-          { t: "p", text: "Turn off Memory Integrity under Core Isolation, then restart the computer." },
-          { t: "path", steps: ["Windows Security", "Device security", "Core isolation", "Memory integrity — Off"] },
-          { t: "callout", text: "Restart the PC after turning it off." },
-          { t: "callout", text: "If the FACEIT anti-cheat is installed, ESP may not launch while it’s running." },
-        ],
-      },
-      {
-        id: "hyperv", n: "04", toc: "Hyper-V (Intel · 25H2)", head: "Intel and Windows 25H2: disable Hyper-V",
-        blocks: [
-          { t: "p", text: "On Intel CPUs with Windows 25H2 you also need to disable Hyper-V in Windows features, otherwise you may hit a blue screen (BSOD)." },
-          { t: "path", steps: ["Control Panel", "Programs", "Turn Windows features on or off", "Uncheck Hyper-V", "OK and restart"] },
-          { t: "callout", text: "If blue screens (BSOD) continue, disable virtualization in the BIOS too: Intel VT-d / Virtualization Technology." },
-        ],
-      },
-      {
-        id: "after-purchase", n: "05", toc: "Getting the key", head: "After purchase",
+        id: "after-purchase", n: "02", toc: "Getting the key", head: "After purchase",
         blocks: [
           { t: "p", text: "After payment you’ll receive an activation key and this guide. The key looks like this:" },
           { t: "code", text: KEY_SAMPLE },
         ],
       },
       {
-        id: "download", n: "06", toc: "Download", head: "Downloading the program",
+        id: "download", n: "03", toc: "Download", head: "Downloading the program",
         blocks: [
           { t: "p", text: "Download the launcher with the “Download” button in the launcher block, then install or run the app once it finishes downloading." },
         ],
       },
       {
-        id: "activate", n: "07", toc: "Key activation", head: "Key activation",
+        id: "activate", n: "04", toc: "Key activation", head: "Key activation",
         blocks: [
           { t: "p", text: "Go back to the program and paste the activation key you received into the corresponding field." },
         ],
       },
       {
-        id: "menu", n: "08", toc: "Open the menu", head: "Open the menu in-game",
+        id: "menu", n: "05", toc: "Open the menu", head: "Open the menu in-game",
         blocks: [
           { t: "p", text: "The ESP menu opens and hides with the Home key inside the game. Changes apply live, no restart needed." },
         ],
       },
       {
-        id: "support", n: "09", toc: "Support", head: "Support",
+        id: "support", n: "06", toc: "Support", head: "Support",
         blocks: [
           { t: "p", text: "If you run into problems, contact support via Discord." },
           { t: "steps", items: ["Go to our Discord server.", "Find the support section.", "Create a ticket or write a message.", "Describe your problem in as much detail as possible."] },
