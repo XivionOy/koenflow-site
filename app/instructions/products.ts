@@ -1,8 +1,8 @@
 // Продукты, у которых есть страница инструкции. Ключ уходит в ?p=<id>,
 // поэтому менять его нельзя без редиректа со старого значения.
-export type Product = "trading" | "esp" | "stalcraft-esp" | "radar";
+export type Product = "trading" | "esp" | "stalcraft-esp" | "radar" | "deltaforce-esp";
 
-export const PRODUCT_ORDER: Product[] = ["trading", "esp", "stalcraft-esp", "radar"];
+export const PRODUCT_ORDER: Product[] = ["trading", "esp", "stalcraft-esp", "radar", "deltaforce-esp"];
 export const DEFAULT_PRODUCT: Product = "trading";
 
 // CTA-варианты сайдбара. У «скачиваемых» продуктов один прямой линк на
@@ -58,10 +58,24 @@ export const PRODUCTS: Record<Product, ProductMeta> = {
       badges: ["PC", "Mobile", "Web"],
     },
   },
+  "deltaforce-esp": {
+    id: "deltaforce-esp",
+    label: "Delta Force ESP",
+    short: "Delta Force ESP",
+    // Тот же KoenFlow Launcher раздаёт Delta Force ESP наравне с остальными.
+    download: { url: "/downloads/KoenFlowLauncher-latest.exe", version: "V5.1.5", sizeMb: 24 },
+  },
 };
 
 // Нормализует значение из ?p=… к валидному продукту.
 export function resolveProduct(raw: string | undefined): Product {
-  if (raw === "esp" || raw === "trading" || raw === "stalcraft-esp" || raw === "radar") return raw;
+  if (
+    raw === "esp" ||
+    raw === "trading" ||
+    raw === "stalcraft-esp" ||
+    raw === "radar" ||
+    raw === "deltaforce-esp"
+  )
+    return raw;
   return DEFAULT_PRODUCT;
 }

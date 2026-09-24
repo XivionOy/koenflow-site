@@ -786,6 +786,128 @@ const RADAR_GUIDE: Record<Lang, EspCopy> = {
   },
 };
 
+// Delta Force ESP. Единственная подготовка Windows, которая от юзера нужна,
+// это снять real-time protection. Всё остальное (покупка → скачивание →
+// активация → запуск → поддержка) стандартное для наших ESP-продуктов.
+const DELTAFORCE_ESP_GUIDE: Record<Lang, EspCopy> = {
+  ru: {
+    breadcrumbHome: "Главная",
+    breadcrumbCurrent: "Инструкция",
+    badge: "Инструкция",
+    title: "Подготовка, запуск и настройка",
+    metaUpdated: "Обновлено 24.09.2026",
+    metaRead: "2 мин чтения",
+    sidebarLabel: "Лаунчер",
+    sidebarTitle: "Скачать KoenFlow",
+    sidebarDesc: "Активируйте ключ и запускайте.",
+    sidebarDownload: "Скачать",
+    tocLabel: "Содержание",
+    lead: "Delta Force ESP подсвечивает противников и лут прямо в игре. Установка занимает пару минут, пройдите шаги по порядку.",
+    important: "Важно.",
+    leadCallout: "Прочитайте инструкцию полностью перед выполнением. Большинство проблем возникает из-за пропущенных шагов.",
+    sections: [
+      {
+        id: "defender", n: "01", toc: "Защита в реальном времени", head: "Отключите защиту в реальном времени",
+        blocks: [
+          { t: "p", text: "Перед установкой отключите защиту Windows в реальном времени. Делайте это вручную через системные настройки:" },
+          { t: "path", steps: ["Параметры", "Обновление и безопасность", "Безопасность Windows", "Защита от вирусов и угроз", "Управление настройками", "Выключить защиту в реальном времени"] },
+        ],
+      },
+      {
+        id: "after-purchase", n: "02", toc: "Получение ключа", head: "Действия после покупки",
+        blocks: [
+          { t: "p", text: "После оплаты вы получите ключ активации и эту инструкцию. Ключ выглядит так:" },
+          { t: "code", text: KEY_SAMPLE },
+        ],
+      },
+      {
+        id: "download", n: "03", toc: "Скачивание", head: "Скачивание программы",
+        blocks: [
+          { t: "p", text: "Скачайте лаунчер кнопкой «Скачать» в блоке лаунчера и после загрузки установите или запустите приложение." },
+        ],
+      },
+      {
+        id: "activate", n: "04", toc: "Активация ключа", head: "Активация ключа",
+        blocks: [
+          { t: "p", text: "Вставьте полученный ключ активации в лаунчере и нажмите «Активировать»." },
+        ],
+      },
+      {
+        id: "launch", n: "05", toc: "Запуск", head: "Запуск ESP и игры",
+        blocks: [
+          { t: "p", text: "В библиотеке лаунчера нажмите Launch на карточке Delta Force ESP, затем запустите Delta Force обычным способом. ESP автоматически подключится к игре." },
+        ],
+      },
+      {
+        id: "support", n: "06", toc: "Поддержка", head: "Поддержка",
+        blocks: [
+          { t: "p", text: "Если возникли проблемы, обращайтесь в поддержку через Discord." },
+          { t: "steps", items: ["Перейдите на наш Discord-сервер.", "Найдите раздел поддержки.", "Создайте тикет или напишите сообщение.", "Опишите проблему как можно подробнее."] },
+          { t: "discord", button: "Перейти в Discord", note: "Наша команда постарается помочь в кратчайшие сроки." },
+        ],
+      },
+    ],
+  },
+  en: {
+    breadcrumbHome: "Home",
+    breadcrumbCurrent: "Guide",
+    badge: "Guide",
+    title: "Setup, launch and configuration",
+    metaUpdated: "Updated 24.09.2026",
+    metaRead: "2 min read",
+    sidebarLabel: "Launcher",
+    sidebarTitle: "Download KoenFlow",
+    sidebarDesc: "Activate the key and launch.",
+    sidebarDownload: "Download",
+    tocLabel: "Contents",
+    lead: "Delta Force ESP highlights enemies and loot right in the game. Installation takes a couple of minutes, follow the steps in order.",
+    important: "Important.",
+    leadCallout: "Read the whole guide before you start. Most issues come from skipped steps.",
+    sections: [
+      {
+        id: "defender", n: "01", toc: "Real-time protection", head: "Disable real-time protection",
+        blocks: [
+          { t: "p", text: "Before installing, turn off Windows real-time protection. Do it manually through the system settings:" },
+          { t: "path", steps: ["Settings", "Update & Security", "Windows Security", "Virus & threat protection", "Manage settings", "Turn off real-time protection"] },
+        ],
+      },
+      {
+        id: "after-purchase", n: "02", toc: "Getting the key", head: "After purchase",
+        blocks: [
+          { t: "p", text: "After payment you’ll receive an activation key and this guide. The key looks like this:" },
+          { t: "code", text: KEY_SAMPLE },
+        ],
+      },
+      {
+        id: "download", n: "03", toc: "Download", head: "Downloading the program",
+        blocks: [
+          { t: "p", text: "Download the launcher with the “Download” button in the launcher block, then install or run the app once it finishes downloading." },
+        ],
+      },
+      {
+        id: "activate", n: "04", toc: "Key activation", head: "Key activation",
+        blocks: [
+          { t: "p", text: "Paste the activation key you received into the launcher and click “Activate”." },
+        ],
+      },
+      {
+        id: "launch", n: "05", toc: "Launch", head: "Launch ESP and the game",
+        blocks: [
+          { t: "p", text: "In the launcher’s library click Launch on the Delta Force ESP card, then start Delta Force normally. ESP hooks into the game automatically." },
+        ],
+      },
+      {
+        id: "support", n: "06", toc: "Support", head: "Support",
+        blocks: [
+          { t: "p", text: "If you run into problems, contact support via Discord." },
+          { t: "steps", items: ["Go to our Discord server.", "Find the support section.", "Create a ticket or write a message.", "Describe your problem in as much detail as possible."] },
+          { t: "discord", button: "Open Discord", note: "Our team will try to help as soon as possible." },
+        ],
+      },
+    ],
+  },
+};
+
 function SectionTitle({ id, n, title }: { id: string; n: string; title: string }) {
   return (
     <h2 id={id} className="scroll-mt-5xl font-inter text-h3 text-ink">
@@ -950,9 +1072,10 @@ export default async function InstructionsPage({
   // секций + блоки), но чтения текста разные — выбираем по slug'у продукта.
   // Trading остаётся на фиксированной схеме (ниже, ветка !isBlockGuide).
   const blockGuide =
-    product === "stalcraft-esp" ? STALCRAFT_ESP_GUIDE[lang] :
-    product === "esp"           ? ESP_GUIDE[lang] :
-    product === "radar"         ? RADAR_GUIDE[lang] :
+    product === "stalcraft-esp"  ? STALCRAFT_ESP_GUIDE[lang] :
+    product === "esp"            ? ESP_GUIDE[lang] :
+    product === "radar"          ? RADAR_GUIDE[lang] :
+    product === "deltaforce-esp" ? DELTAFORCE_ESP_GUIDE[lang] :
     null;
   const isBlockGuide = blockGuide !== null;
   const tc = TRADING_GUIDE[lang];
